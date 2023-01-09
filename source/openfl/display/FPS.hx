@@ -35,7 +35,7 @@ class FPS extends TextField
 	@:noCompletion private var cacheCount:Int;
 	@:noCompletion private var currentTime:Float;
 	@:noCompletion private var times:Array<Float>;
-
+	@:noCompletion private var memPeak:Float = 0;
 	public function new(x:Float = 10, y:Float = 10, color:Int = 0x000000)
 	{
 		super();
@@ -46,11 +46,11 @@ class FPS extends TextField
 		currentFPS = 0;
 		selectable = false;
 		mouseEnabled = false;
-		defaultTextFormat = new TextFormat("_sans", 14, color);
+		defaultTextFormat = new TextFormat("VCR OSD Mono", 15, color);
 		autoSize = LEFT;
 		multiline = true;
 		text = "FPS: ";
-
+        
 		cacheCount = 0;
 		currentTime = 0;
 		times = [];
@@ -87,8 +87,11 @@ class FPS extends TextField
 			
 			#if openfl
 			memoryMegas = Math.abs(FlxMath.roundDecimal(System.totalMemory / 1000000, 1));
-			text += "\nMemory: " + memoryMegas + " MB";
+			if (memoryMegas > memPeak) memPeak = memoryMegas;
+			text += "\nMEM: " + memoryMegas + " MB / " + memPeak + " MB";
+			
 			#end
+
 
 			textColor = 0xFFFFFFFF;
 			if (memoryMegas > 3000 || currentFPS <= ClientPrefs.framerate / 2)

@@ -106,7 +106,15 @@ class OptionsState extends MusicBeatState
 
 		if (controls.BACK) {
 			FlxG.sound.play(Paths.sound('cancelMenu'));
-			MusicBeatState.switchState(new MainMenuState());
+			if (PlayState.optionMode)
+				{
+					MusicBeatState.switchState(new PlayState());
+					PlayState.optionMode = false;
+				}
+			else
+				{
+					MusicBeatState.switchState(new MainMenuState());
+				}
 		}
 
 		if (controls.ACCEPT) {

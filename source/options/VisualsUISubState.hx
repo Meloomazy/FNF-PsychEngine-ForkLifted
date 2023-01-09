@@ -77,6 +77,13 @@ class VisualsUISubState extends BaseOptionsMenu
 			true);
 		addOption(option);
 
+		var option:Option = new Option('Rating Camera',
+		"If checked, make the ratings into World instead Hud",
+		'ratingCameras',
+		'bool',
+		false);
+		addOption(option);
+
 		var option:Option = new Option('Health Bar Transparency',
 			'How much transparent should the health bar and icons be.',
 			'healthBarAlpha',
@@ -98,7 +105,15 @@ class VisualsUISubState extends BaseOptionsMenu
 		addOption(option);
 		option.onChange = onChangeFPSCounter;
 		#end
-		
+
+		var option:Option = new Option('Auto Focus',
+		'Pretty self explanatory lol\nbutfor real it make the game arent stopped',
+		'autoFocus',
+		'bool',
+		false);
+	    addOption(option);
+	    option.onChange = onChangeAutoFocus;
+
 		var option:Option = new Option('Pause Screen Song:',
 			"What song do you prefer for the Pause Screen?",
 			'pauseMusic',
@@ -137,7 +152,13 @@ class VisualsUISubState extends BaseOptionsMenu
 
 		changedMusic = true;
 	}
-
+	function onChangeAutoFocus()
+		{
+			if(!ClientPrefs.autoFocus)
+				FlxG.autoPause = true;
+			else
+				FlxG.autoPause = false;
+		}
 	override function destroy()
 	{
 		if(changedMusic) FlxG.sound.playMusic(Paths.music('freakyMenu'));

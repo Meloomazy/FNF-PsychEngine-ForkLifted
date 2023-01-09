@@ -200,6 +200,7 @@ class PlayState extends MusicBeatState
 	private var updateTime:Bool = true;
 	public static var changedDifficulty:Bool = false;
 	public static var chartingMode:Bool = false;
+	public static var optionMode:Bool = false;
 
 	//Gameplay settings
 	public var healthGain:Float = 1;
@@ -423,7 +424,7 @@ class PlayState extends MusicBeatState
 		}
 		else
 		{
-			detailsText = "Freeplay";
+			detailsText = "Freeplay (" + Paths.currentModDirectory + ")";
 		}
 
 		// String for when the game is paused
@@ -1361,7 +1362,7 @@ class PlayState extends MusicBeatState
 	
 		#if desktop
 		// Updating Discord Rich Presence.
-		DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+		DiscordClient.changePresence(detailsText, FreeplayState.firstLetterUpperCase(SONG.song) + " (" + storyDifficultyText + ")", iconP2.getCharacter());
 		#end
 
 		if(!ClientPrefs.controllerMode)
@@ -2820,7 +2821,7 @@ class PlayState extends MusicBeatState
 	override public function onFocus():Void
 	{
 		#if desktop
-		if (health > 0 && !paused)
+		if (health > 0 && !paused )
 		{
 			if (Conductor.songPosition > 0.0)
 			{
@@ -2839,7 +2840,7 @@ class PlayState extends MusicBeatState
 	override public function onFocusLost():Void
 	{
 		#if desktop
-		if (health > 0 && !paused)
+		if (health > 0 && !paused && ClientPrefs.autoFocus)
 		{
 			DiscordClient.changePresence(detailsPausedText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
 		}
@@ -4159,7 +4160,14 @@ class PlayState extends MusicBeatState
 		}
 
 		rating.loadGraphic(Paths.image(pixelShitPart1 + daRating.image + pixelShitPart2));
-		rating.cameras = [camHUD];
+		if (ClientPrefs.ratingCameras)
+			{
+				rating.cameras = [camGame];
+			}
+		else
+			{
+				rating.cameras = [camHUD];
+			}
 		rating.screenCenter();
 		rating.x = coolText.x - 40;
 		rating.y -= 60;
@@ -4171,7 +4179,14 @@ class PlayState extends MusicBeatState
 		rating.y -= ClientPrefs.comboOffset[1];
 
 		var comboSpr:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'combo' + pixelShitPart2));
-		comboSpr.cameras = [camHUD];
+		if (ClientPrefs.ratingCameras)
+			{
+				comboSpr.cameras = [camGame];
+			}
+		else
+			{
+				comboSpr.cameras = [camHUD];
+			}
 		comboSpr.screenCenter();
 		comboSpr.x = coolText.x;
 		comboSpr.acceleration.y = FlxG.random.int(200, 300) * playbackRate * playbackRate;
@@ -4237,7 +4252,14 @@ class PlayState extends MusicBeatState
 		for (i in seperatedScore)
 		{
 			var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'num' + Std.int(i) + pixelShitPart2));
-			numScore.cameras = [camHUD];
+			if (ClientPrefs.ratingCameras)
+				{
+					numScore.cameras = [camGame];
+				}
+			else
+				{
+					numScore.cameras = [camHUD];
+				}
 			numScore.screenCenter();
 			numScore.x = coolText.x + (43 * daLoop) - 90;
 			numScore.y += 80;

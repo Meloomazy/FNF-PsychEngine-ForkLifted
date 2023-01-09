@@ -14,7 +14,9 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
+import flixel.util.FlxTimer;
 import lime.utils.Assets;
 import flixel.system.FlxSound;
 import openfl.utils.Assets as OpenFlAssets;
@@ -34,6 +36,7 @@ class FreeplayState extends MusicBeatState
 	var curDifficulty:Int = -1;
 	private static var lastDifficultyName:String = '';
 	public static var isWithVoices:Bool = false;
+	public static var zoomnow:Bool = false;
 
 	var scoreBG:FlxSprite;
 	var scoreText:FlxText;
@@ -66,7 +69,7 @@ class FreeplayState extends MusicBeatState
 
 		#if desktop
 		// Updating Discord Rich Presence
-		DiscordClient.changePresence("In the Menus", null);
+		DiscordClient.changePresence("In Freeplay Menu", null);
 		#end
 
 		for (i in 0...WeekData.weeksList.length) {
@@ -139,7 +142,9 @@ class FreeplayState extends MusicBeatState
 
 			Paths.currentModDirectory = songs[i].folder;
 			var icon:HealthIcon = new HealthIcon(songs[i].songCharacter);
-			icon.sprTracker = songText;
+			icon.y = 500;
+			icon.x = 100;
+			icon.scale.set(1.3,1.3);
 
 			// using a FlxGroup is too much fuss!
 			iconArray.push(icon);
@@ -159,11 +164,11 @@ class FreeplayState extends MusicBeatState
 		withVoices.x = FlxG.width + withVoices.width;
 		add(withVoices);
 
-		scoreBG = new FlxSprite(scoreText.x - 6, 0).makeGraphic(1, 66, 0xFF000000);
+		scoreBG = new FlxSprite(scoreText.x - 6, 0).makeGraphic(1, 150, 0xFF000000);
 		scoreBG.alpha = 0.6;
 		add(scoreBG);
 
-		diffText = new FlxText(scoreText.x, scoreText.y + 36, 0, "", 24);
+		diffText = new FlxText(scoreText.x, scoreText.y + 150, 0, "", 24);
 		diffText.font = scoreText.font;
 		add(diffText);
 
@@ -216,6 +221,19 @@ class FreeplayState extends MusicBeatState
 		text.setFormat(Paths.font("vcr.ttf"), size, FlxColor.WHITE, RIGHT);
 		text.scrollFactor.set();
 		add(text);
+		
+		FlxTween.tween(withVoices, {x: FlxG.width - withVoices.width-50}, 0.5, {
+			ease: FlxEase.cubeInOut,
+			onComplete: function(twen:FlxTween)
+			{
+				new FlxTimer().start(1, function(gone:FlxTimer)
+                    {
+						FlxTween.tween(withVoices, {x: FlxG.width + withVoices.width}, 0.5, {
+							ease: FlxEase.cubeInOut
+						});
+					});
+			}
+		});
 		super.create();
 	}
 
@@ -290,6 +308,50 @@ class FreeplayState extends MusicBeatState
 		var shiftMult:Int = 1;
 		if(FlxG.keys.pressed.SHIFT) shiftMult = 3;
 
+		if(FlxG.keys.pressed.TAB)
+			{
+				if (!isWithVoices)
+				{
+					withVoices.text = 'Voices = true';
+					new FlxTimer().start(0.5, function(activenowbitch:FlxTimer)
+						{
+							isWithVoices = true;
+						});
+					FlxTween.tween(withVoices, {x: FlxG.width - withVoices.width - 50}, 0.5, {
+						ease: FlxEase.cubeInOut,
+						onComplete: function(twen:FlxTween)
+						{
+							
+							new FlxTimer().start(1, function(guh:FlxTimer)
+								{
+									FlxTween.tween(withVoices, {x: FlxG.width + withVoices.width}, 0.5, {
+										ease: FlxEase.cubeInOut
+									});
+								});
+						}
+					});
+				}
+				if (isWithVoices)
+					{
+						new FlxTimer().start(0.5, function(activenowbitch:FlxTimer)
+							{
+								isWithVoices = false;
+							});
+						withVoices.text = 'Voices = false';
+						FlxTween.tween(withVoices, {x: FlxG.width - withVoices.width-50}, 0.5, {
+							ease: FlxEase.cubeInOut,
+							onComplete: function(twen:FlxTween)
+							{
+								new FlxTimer().start(1, function(guh:FlxTimer)
+									{
+										FlxTween.tween(withVoices, {x: FlxG.width + withVoices.width}, 0.5, {
+											ease: FlxEase.cubeInOut
+										});
+									});
+							}
+						});
+					}
+			}
 		if(songs.length > 1)
 		{
 			if (upP)
@@ -379,7 +441,7 @@ class FreeplayState extends MusicBeatState
 				zoomnow = true;
 				Conductor.changeBPM(PlayState.SONG.bpm);
 				checkDrop.velocity.set(PlayState.SONG.bpm,PlayState.SONG.bpm);
-				DiscordClient.changePresence("In Freeplay Menu", "Listening To : " + firstLetterUpperCase(PlayState.SONG.song));
+				DiscordClient.changePresence("In Freeplay Menu ("+ Paths.currentModDirectory + ")", "Listening To: " + firstLetterUpperCase(PlayState.SONG.song));
 				trace('Bro Listening to ' + PlayState.SONG.song);
 				#end
 			}
@@ -404,7 +466,7 @@ class FreeplayState extends MusicBeatState
 			PlayState.SONG = Song.loadFromJson(poop, songLowercase);
 			PlayState.isStoryMode = false;
 			PlayState.storyDifficulty = curDifficulty;
-
+			zoomnow = false;
 			trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
 			if(colorTween != null) {
 				colorTween.cancel();
@@ -426,9 +488,20 @@ class FreeplayState extends MusicBeatState
 			openSubState(new ResetScoreSubState(songs[curSelected].songName, curDifficulty, songs[curSelected].songCharacter));
 			FlxG.sound.play(Paths.sound('scrollMenu'));
 		}
+		if (FlxG.sound.music != null) 
+			Conductor.songPosition = FlxG.sound.music.time;
+
+		FlxG.camera.zoom = FlxMath.lerp(1, FlxG.camera.zoom, CoolUtil.boundTo(1 - (elapsed * 3.125 * 2), 0, 1));
+
 		super.update(elapsed);
 	}
-
+	override function beatHit()
+		{
+			if (zoomnow)
+				{
+					FlxG.camera.zoom += 0.05;
+				}
+		}
 	public static function destroyFreeplayVocals() {
 		if(vocals != null) {
 			vocals.stop();
@@ -494,7 +567,7 @@ class FreeplayState extends MusicBeatState
 
 		for (i in 0...iconArray.length)
 		{
-			iconArray[i].alpha = 0.6;
+			iconArray[i].alpha = 0;
 		}
 
 		iconArray[curSelected].alpha = 1;
@@ -504,7 +577,7 @@ class FreeplayState extends MusicBeatState
 			item.targetY = bullShit - curSelected;
 			bullShit++;
 
-			item.alpha = 0.6;
+			item.alpha = 0.3;
 			// item.setGraphicSize(Std.int(item.width * 0.8));
 
 			if (item.targetY == 0)
@@ -557,7 +630,11 @@ class FreeplayState extends MusicBeatState
 			curDifficulty = newPos;
 		}
 	}
-
+   // thanks raltyro
+	public static function firstLetterUpperCase(strData:String):String {
+		var newArray = [for (str in strData.split(' ')) str.charAt(0).toUpperCase() + str.substr(1)];
+		return newArray.join(' ');
+	}
 	private function positionHighscore() {
 		scoreText.x = FlxG.width - scoreText.width - 6;
 

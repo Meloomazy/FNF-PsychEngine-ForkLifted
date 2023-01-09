@@ -1,6 +1,6 @@
 package;
 
-import PsychSplash.PsychIntro;
+import PsychSplash;
 import flixel.graphics.FlxGraphic;
 import flixel.FlxG;
 import flixel.FlxGame;
