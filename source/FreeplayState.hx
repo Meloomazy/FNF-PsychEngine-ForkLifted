@@ -8,6 +8,7 @@ import flash.text.TextField;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.display.FlxGridOverlay;
+import flixel.addons.display.FlxBackdrop;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
@@ -32,20 +33,24 @@ class FreeplayState extends MusicBeatState
 	private static var curSelected:Int = 0;
 	var curDifficulty:Int = -1;
 	private static var lastDifficultyName:String = '';
+	public static var isWithVoices:Bool = false;
 
 	var scoreBG:FlxSprite;
 	var scoreText:FlxText;
 	var diffText:FlxText;
+	var withVoices:FlxText;
 	var lerpScore:Int = 0;
 	var lerpRating:Float = 0;
 	var intendedScore:Int = 0;
 	var intendedRating:Float = 0;
+	var intendedMiss:Int = 0;
 
 	private var grpSongs:FlxTypedGroup<Alphabet>;
 	private var curPlaying:Bool = false;
 
 	private var iconArray:Array<HealthIcon> = [];
 
+	var checkDrop:FlxBackdrop;
 	var bg:FlxSprite;
 	var intendedColor:Int;
 	var colorTween:FlxTween;
@@ -105,15 +110,24 @@ class FreeplayState extends MusicBeatState
 		bg.antialiasing = ClientPrefs.globalAntialiasing;
 		add(bg);
 		bg.screenCenter();
+	    checkDrop = new FlxBackdrop(Paths.image('checkaboard'), XY, -0, -0);
+		checkDrop.scrollFactor.set();
+		checkDrop.screenCenter(X);
+		checkDrop.velocity.set(FlxG.random.int(-150, 150),FlxG.random.int(-80, 80));
+		checkDrop.antialiasing = ClientPrefs.globalAntialiasing;
+        add(checkDrop);
+
 
 		grpSongs = new FlxTypedGroup<Alphabet>();
 		add(grpSongs);
 
 		for (i in 0...songs.length)
 		{
-			var songText:Alphabet = new Alphabet(90, 320, songs[i].songName, true);
+			var songText:Alphabet = new Alphabet(0, 320, songs[i].songName, true);
 			songText.isMenuItem = true;
 			songText.targetY = i - curSelected;
+			songText.changeX = false;
+			songText.screenCenter(X);
 			grpSongs.add(songText);
 
 			var maxWidth = 980;
@@ -139,6 +153,11 @@ class FreeplayState extends MusicBeatState
 
 		scoreText = new FlxText(FlxG.width * 0.7, 5, 0, "", 32);
 		scoreText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, RIGHT);
+
+		withVoices = new FlxText(0, FlxG.height - 100, 0, "Voices = false", 32);
+		withVoices.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.WHITE, RIGHT);
+		withVoices.x = FlxG.width + withVoices.width;
+		add(withVoices);
 
 		scoreBG = new FlxSprite(scoreText.x - 6, 0).makeGraphic(1, 66, 0xFF000000);
 		scoreBG.alpha = 0.6;
@@ -259,7 +278,7 @@ class FreeplayState extends MusicBeatState
 			ratingSplit[1] += '0';
 		}
 
-		scoreText.text = 'PERSONAL BEST: ' + lerpScore + ' (' + ratingSplit.join('.') + '%)';
+		scoreText.text = 'Personal Best\nSCORES: ' + lerpScore + '\nACCURACY: ' + ratingSplit.join('.') + '%\nMISSES: ' + intendedMiss;
 		positionHighscore();
 
 		var upP = controls.UI_UP_P;
@@ -336,18 +355,32 @@ class FreeplayState extends MusicBeatState
 				Paths.currentModDirectory = songs[curSelected].folder;
 				var poop:String = Highscore.formatSong(songs[curSelected].songName.toLowerCase(), curDifficulty);
 				PlayState.SONG = Song.loadFromJson(poop, songs[curSelected].songName.toLowerCase());
-				if (PlayState.SONG.needsVoices)
-					vocals = new FlxSound().loadEmbedded(Paths.voices(PlayState.SONG.song));
-				else
-					vocals = new FlxSound();
-
-				FlxG.sound.list.add(vocals);
 				FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 0.7);
-				vocals.play();
-				vocals.persist = true;
-				vocals.looped = true;
-				vocals.volume = 0.7;
+				if (isWithVoices)
+					{
+						if (PlayState.SONG.needsVoices)
+							vocals = new FlxSound().loadEmbedded(Paths.voices(PlayState.SONG.song));
+						else
+							vocals = new FlxSound();
+		
+						FlxG.sound.list.add(vocals);
+						vocals.play();
+						vocals.persist = true;
+						vocals.looped = true;
+						vocals.volume = 0.7;
+					}
+				else
+					{
+						if (vocals != null)
+							vocals.stop();
+					}
+
 				instPlaying = curSelected;
+				zoomnow = true;
+				Conductor.changeBPM(PlayState.SONG.bpm);
+				checkDrop.velocity.set(PlayState.SONG.bpm,PlayState.SONG.bpm);
+				DiscordClient.changePresence("In Freeplay Menu", "Listening To : " + firstLetterUpperCase(PlayState.SONG.song));
+				trace('Bro Listening to ' + PlayState.SONG.song);
 				#end
 			}
 		}
@@ -418,6 +451,7 @@ class FreeplayState extends MusicBeatState
 		#if !switch
 		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
 		intendedRating = Highscore.getRating(songs[curSelected].songName, curDifficulty);
+		intendedMiss = Highscore.getMiss(songs[curSelected].songName, curDifficulty);
 		#end
 
 		PlayState.storyDifficulty = curDifficulty;
