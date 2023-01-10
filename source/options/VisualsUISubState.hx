@@ -119,7 +119,7 @@ class VisualsUISubState extends BaseOptionsMenu
 			'pauseMusic',
 			'string',
 			'Tea Time',
-			['None', 'Breakfast', 'Tea Time']);
+			['None', 'Breakfast', 'Tea Time' , 'Song Instrumental']);
 		addOption(option);
 		option.onChange = onChangePauseMusic;
 		
@@ -147,7 +147,7 @@ class VisualsUISubState extends BaseOptionsMenu
 	{
 		if(ClientPrefs.pauseMusic == 'None')
 			FlxG.sound.music.volume = 0;
-		else
+		if(ClientPrefs.pauseMusic != 'Song Instrumental') 
 			FlxG.sound.playMusic(Paths.music(Paths.formatToSongPath(ClientPrefs.pauseMusic)));
 
 		changedMusic = true;
