@@ -17,6 +17,7 @@ class ClientPrefs {
 	public static var lowQuality:Bool = false;
 	public static var autoFocus:Bool = false;
 	public static var ratingCameras:Bool = false;
+	public static var cameraBeTween:Bool = false;
 	public static var shaders:Bool = true;
 	public static var framerate:Int = 60;
 	public static var cursing:Bool = true;
@@ -101,6 +102,8 @@ class ClientPrefs {
 		FlxG.save.data.opponentStrums = opponentStrums;
 		FlxG.save.data.showFPS = showFPS;
 		FlxG.save.data.flashing = flashing;
+		FlxG.save.data.ratingCameras = ratingCameras;
+		FlxG.save.data.cameraBeTween = cameraBeTween;
 		FlxG.save.data.globalAntialiasing = globalAntialiasing;
 		FlxG.save.data.noteSplashes = noteSplashes;
 		FlxG.save.data.lowQuality = lowQuality;
@@ -166,6 +169,12 @@ class ClientPrefs {
 		}
 		if(FlxG.save.data.noteSplashes != null) {
 			noteSplashes = FlxG.save.data.noteSplashes;
+		}
+		if(FlxG.save.data.cameraBeTween != null) {
+			cameraBeTween = FlxG.save.data.cameraBeTween;
+		}
+		if(FlxG.save.data.ratingCameras != null) {
+			ratingCameras = FlxG.save.data.ratingCameras;
 		}
 		if(FlxG.save.data.lowQuality != null) {
 			lowQuality = FlxG.save.data.lowQuality;
