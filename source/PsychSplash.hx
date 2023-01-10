@@ -138,7 +138,7 @@ class PsychSplash extends FlxState
             {
                 new FlxTimer().start(1, function(guh:FlxTimer)
                     {
-                        startVideo('unfunny/'+ unfunnyVideos[FlxG.random.int(1, unfunnyVideos.length)]);
+                        startVideo('unfunny/'+ unfunnyVideos[FlxG.random.int(1, unfunnyVideos.length)-1]);
                     });
             }
 
