@@ -62,10 +62,12 @@ class PauseSubState extends MusicBeatSubstate
 
 
 		pauseMusic = new FlxSound();
-		if(songName != null) {
+		if(songName != null) { 
 			pauseMusic.loadEmbedded(Paths.music(songName), true, true);
-		} else if (songName != 'None') {
+		} else if (songName != 'None' && ClientPrefs.pauseMusic != 'Song Instrumental') {
 			pauseMusic.loadEmbedded(Paths.music(Paths.formatToSongPath(ClientPrefs.pauseMusic)), true, true);
+		} else if (ClientPrefs.pauseMusic == 'Song Instrumental'){
+			pauseMusic.loadEmbedded(Paths.inst(PlayState.SONG.song), true, true);
 		}
 		pauseMusic.volume = 0;
 		pauseMusic.play(false, FlxG.random.int(0, Std.int(pauseMusic.length / 2)));
@@ -140,7 +142,7 @@ class PauseSubState extends MusicBeatSubstate
 	override function update(elapsed:Float)
 	{
 		cantUnpause -= elapsed;
-		if (pauseMusic.volume < 0.5)
+		if (pauseMusic.volume < 0.65)
 			pauseMusic.volume += 0.01 * elapsed;
 
 		super.update(elapsed);
