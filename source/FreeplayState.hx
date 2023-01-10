@@ -115,6 +115,7 @@ class FreeplayState extends MusicBeatState
 		bg.screenCenter();
 	    checkDrop = new FlxBackdrop(Paths.image('checkaboard'), XY, -0, -0);
 		checkDrop.scrollFactor.set();
+		checkDrop.scale.set(0.7,0.7);
 		checkDrop.screenCenter(X);
 		checkDrop.velocity.set(FlxG.random.int(-150, 150),FlxG.random.int(-80, 80));
 		checkDrop.antialiasing = ClientPrefs.globalAntialiasing;
@@ -417,7 +418,7 @@ class FreeplayState extends MusicBeatState
 				Paths.currentModDirectory = songs[curSelected].folder;
 				var poop:String = Highscore.formatSong(songs[curSelected].songName.toLowerCase(), curDifficulty);
 				PlayState.SONG = Song.loadFromJson(poop, songs[curSelected].songName.toLowerCase());
-				FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 0.7);
+				FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 0.8);
 				if (isWithVoices)
 					{
 						if (PlayState.SONG.needsVoices)
