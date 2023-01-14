@@ -43,6 +43,7 @@ class FreeplayState extends MusicBeatState
 	var diffText:FlxText;
 	var withVoices:FlxText;
 	var lerpScore:Int = 0;
+	var lerpMiss:Int = 0;
 	var lerpRating:Float = 0;
 	var intendedScore:Int = 0;
 	var intendedRating:Float = 0;
@@ -127,11 +128,10 @@ class FreeplayState extends MusicBeatState
 
 		for (i in 0...songs.length)
 		{
-			var songText:Alphabet = new Alphabet(0, 320, songs[i].songName, true);
+			var songText:Alphabet = new Alphabet(FlxG.width / 2, 320, songs[i].songName, true);
 			songText.isMenuItem = true;
 			songText.targetY = i - curSelected;
 			songText.changeX = false;
-			songText.screenCenter(X);
 			grpSongs.add(songText);
 
 			var maxWidth = 980;
@@ -282,9 +282,12 @@ class FreeplayState extends MusicBeatState
 
 		lerpScore = Math.floor(FlxMath.lerp(lerpScore, intendedScore, CoolUtil.boundTo(elapsed * 24, 0, 1)));
 		lerpRating = FlxMath.lerp(lerpRating, intendedRating, CoolUtil.boundTo(elapsed * 12, 0, 1));
+		lerpMiss = Math.floor(FlxMath.lerp(lerpMiss, intendedMiss, CoolUtil.boundTo(elapsed * 12, 0, 1)));
 
 		if (Math.abs(lerpScore - intendedScore) <= 10)
 			lerpScore = intendedScore;
+		if (Math.abs(lerpMiss - intendedMiss) <= 1)
+			lerpMiss = intendedMiss;
 		if (Math.abs(lerpRating - intendedRating) <= 0.01)
 			lerpRating = intendedRating;
 
@@ -297,7 +300,7 @@ class FreeplayState extends MusicBeatState
 			ratingSplit[1] += '0';
 		}
 
-		scoreText.text = 'Personal Best\nSCORES: ' + lerpScore + '\nACCURACY: ' + ratingSplit.join('.') + '%\nMISSES: ' + intendedMiss;
+		scoreText.text = 'Personal Best\nSCORES: ' + lerpScore + '\nACCURACY: ' + ratingSplit.join('.') + '%\nMISSES: ' + lerpMiss;
 		positionHighscore();
 
 		var upP = controls.UI_UP_P;
@@ -424,13 +427,13 @@ class FreeplayState extends MusicBeatState
 					vocals = new FlxSound();
 
 				FlxG.sound.list.add(vocals);
-				FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 0.7);
+				FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 0.8);
 				if (isWithVoices)
 				vocals.play();
 
 				vocals.persist = true;
 				vocals.looped = true;
-				vocals.volume = 0.7;
+				vocals.volume = 0.8;
 				instPlaying = curSelected;
 
 				zoomnow = true;
@@ -488,6 +491,34 @@ class FreeplayState extends MusicBeatState
 
 		FlxG.camera.zoom = FlxMath.lerp(1, FlxG.camera.zoom, CoolUtil.boundTo(1 - (elapsed * 3.125 * 2), 0, 1));
 
+		
+		var bullShit:Int = 0;
+		var lerpVal:Float = CoolUtil.boundTo(elapsed * 12, 0, 1);
+
+		for (i in 0...iconArray.length)
+		{
+			iconArray[i].alpha = 0;
+		}
+
+		iconArray[curSelected].alpha = 1;
+
+		for (item in grpSongs.members)
+		{
+			item.x = FlxMath.lerp(item.x, 150 + -40 * Math.abs(item.targetY), lerpVal);
+			item.targetY = bullShit - curSelected;
+			bullShit++;
+
+			item.alpha = 0.3;
+			// item.setGraphicSize(Std.int(item.width * 0.8));
+
+			if (item.targetY == 0)
+			{
+				var lastX:Float = item.x;
+					item.x = FlxMath.lerp(lastX, 350, lerpVal);
+					item.alpha = 1;
+			}
+		}
+		
 		super.update(elapsed);
 	}
 	override function beatHit()
@@ -558,30 +589,6 @@ class FreeplayState extends MusicBeatState
 		intendedRating = Highscore.getRating(songs[curSelected].songName, curDifficulty);
 		#end
 
-		var bullShit:Int = 0;
-
-		for (i in 0...iconArray.length)
-		{
-			iconArray[i].alpha = 0;
-		}
-
-		iconArray[curSelected].alpha = 1;
-
-		for (item in grpSongs.members)
-		{
-			item.targetY = bullShit - curSelected;
-			bullShit++;
-
-			item.alpha = 0.3;
-			// item.setGraphicSize(Std.int(item.width * 0.8));
-
-			if (item.targetY == 0)
-			{
-				item.alpha = 1;
-				// item.setGraphicSize(Std.int(item.width));
-			}
-		}
-		
 		Paths.currentModDirectory = songs[curSelected].folder;
 		PlayState.storyWeek = songs[curSelected].week;
 
