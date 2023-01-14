@@ -27,6 +27,7 @@ class PsychSplash extends FlxState
     var splashT:FlxSprite;
     var thestate:FlxState = new TitleState();
     var randomSplash:FlxText;
+    var skipSplash:FlxText;
     var raresplash:Bool;
 
     var unfunnyVideos:Array<String> = [
@@ -64,9 +65,14 @@ class PsychSplash extends FlxState
         splash.alpha = 0;
         add(splash);
 
-        randomSplash = new FlxText(-0, 0, 0,therandomText[FlxG.random.int(1, therandomText.length)] , 24);
+        randomSplash = new FlxText(-0, 0, 0,therandomText[FlxG.random.int(0, therandomText.length)] , 24);
         randomSplash.setFormat("VCR OSD Mono", 18, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
         add(randomSplash);
+
+        skipSplash = new FlxText(0, 0, 1250, '[PRESS SPACE TO SKIP]' , 0);
+        skipSplash.autoSize = false;
+        skipSplash.setFormat("VCR OSD Mono", 15, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+        add(skipSplash);
 
         splashT = new FlxSprite(-200).loadGraphic(Paths.image('psych_text'));
         splashT.setGraphicSize(Std.int(splashT.width * 0.5));
@@ -135,19 +141,20 @@ class PsychSplash extends FlxState
             });
         }
         else
-            {
-                new FlxTimer().start(1, function(guh:FlxTimer)
-                    {
-                        startVideo('unfunny/'+ unfunnyVideos[FlxG.random.int(1, unfunnyVideos.length)-1]);
-                    });
-            }
+        {
+            new FlxTimer().start(1, function(guh:FlxTimer)
+                {
+                    startVideo('unfunny/'+ unfunnyVideos[FlxG.random.int(0, 2)]);
+                });
+        }
 
         super.create();
     }
 
     override function update(elapsed) 
     {
-        
+        if (FlxG.keys.justPressed.SPACE)   FlxG.switchState(thestate);
+
         super.update(elapsed);
     }
      
