@@ -56,8 +56,12 @@ class PsychSplash extends FlxState
  
 	override function create()
 	{
+        if (FlxG.random.bool(90))
+            raresplash = false;
+        else
+            raresplash = true;
 
-        if (FlxG.random.bool(90)){
+        if (!raresplash){
        
         splash = new FlxSprite(0,-100).loadGraphic(Paths.image('thepsych'));
 		splash.screenCenter(X);
@@ -153,7 +157,7 @@ class PsychSplash extends FlxState
 
     override function update(elapsed) 
     {
-        if (FlxG.keys.justPressed.SPACE)   FlxG.switchState(thestate);
+        if (FlxG.keys.justPressed.SPACE || FlxG.keys.justPressed.ENTER)   FlxG.switchState(thestate);
 
         super.update(elapsed);
     }
