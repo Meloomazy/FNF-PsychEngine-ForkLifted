@@ -28,6 +28,7 @@ class ClientPrefs {
 	public static var arrowHSV:Array<Array<Int>> = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]];
 	public static var ghostTapping:Bool = true;
 	public static var timeBarType:String = 'Time Left';
+	public static var discordClient:String = 'Extended';
 	public static var scoreZoom:Bool = true;
 	public static var noReset:Bool = false;
 	public static var healthBarAlpha:Float = 1;
@@ -102,6 +103,7 @@ class ClientPrefs {
 		FlxG.save.data.opponentStrums = opponentStrums;
 		FlxG.save.data.showFPS = showFPS;
 		FlxG.save.data.flashing = flashing;
+		FlxG.save.data.discordClient = discordClient;
 		FlxG.save.data.ratingCameras = ratingCameras;
 		FlxG.save.data.cameraBeTween = cameraBeTween;
 		FlxG.save.data.globalAntialiasing = globalAntialiasing;
@@ -160,6 +162,9 @@ class ClientPrefs {
 			if(Main.fpsVar != null) {
 				Main.fpsVar.visible = showFPS;
 			}
+		}
+		if (FlxG.save.data.discordClient != null) {
+			discordClient = FlxG.save.data.discordClient;
 		}
 		if(FlxG.save.data.flashing != null) {
 			flashing = FlxG.save.data.flashing;

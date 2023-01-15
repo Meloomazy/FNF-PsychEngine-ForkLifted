@@ -425,7 +425,11 @@ class PlayState extends MusicBeatState
 		}
 		else
 		{
-			detailsText = "Freeplay (" + Paths.currentModDirectory + ")";
+			if (ClientPrefs.discordClient == 'Extended')
+				detailsText = "Freeplay (" + Paths.currentModDirectory + ")";
+			else
+				detailsText = "Freeplay";
+
 		}
 
 		// String for when the game is paused
@@ -2399,7 +2403,11 @@ class PlayState extends MusicBeatState
 
 		#if desktop
 		// Updating Discord Rich Presence (with Time Left)
+		if (ClientPrefs.discordClient == 'Extended')
 		DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter(), true, songLength);
+		else if (ClientPrefs.discordClient == 'Minimum')
+		DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+
 		#end
 		setOnLuas('songLength', songLength);
 		callOnLuas('onSongStart', []);
@@ -2807,6 +2815,7 @@ class PlayState extends MusicBeatState
 			#if desktop
 			if (startTimer != null && startTimer.finished)
 			{
+				if (ClientPrefs.discordClient == 'Extended')
 				DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter(), true, songLength - Conductor.songPosition - ClientPrefs.noteOffset);
 			}
 			else
@@ -4125,8 +4134,8 @@ class PlayState extends MusicBeatState
 	public var totalPlayed:Int = 0;
 	public var totalNotesHit:Float = 0.0;
 
-	public var showCombo:Bool = true;
-	public var showComboNum:Bool = false;
+	public var showCombo:Bool = false;
+	public var showComboNum:Bool = true;
 	public var showRating:Bool = true;
 
 	private function cachePopUpScore()

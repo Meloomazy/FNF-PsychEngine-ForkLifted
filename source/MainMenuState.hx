@@ -8,6 +8,7 @@ import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.FlxCamera;
 import flixel.addons.transition.FlxTransitionableState;
+import flixel.addons.display.FlxBackdrop;
 import flixel.effects.FlxFlicker;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.group.FlxGroup.FlxTypedGroup;
@@ -28,7 +29,7 @@ class MainMenuState extends MusicBeatState
 	public static var psychEngineVersion:String = '0.6.3'; //This is also used for Discord RPC
 	public static var curSelected:Int = 0;
 
-	var menuItems:FlxTypedGroup<FlxSprite>;
+	var menuItems:FlxTypedGroup<Alphabet>;
 	private var camGame:FlxCamera;
 	private var camAchievement:FlxCamera;
 	
@@ -97,9 +98,15 @@ class MainMenuState extends MusicBeatState
 		magenta.color = 0xFFfd719b;
 		add(magenta);
 		
-		// magenta.scrollFactor.set();
+		var checkDrop:FlxBackdrop = new FlxBackdrop(Paths.image('checkaboardMagenta'), XY, -0, -0);
+		checkDrop.scrollFactor.set();
+		checkDrop.screenCenter(X);
+		checkDrop.scale.set(0.7,0.7);
+		checkDrop.velocity.set(FlxG.random.int(-150, 150),FlxG.random.int(-80, 80));
+		checkDrop.antialiasing = ClientPrefs.globalAntialiasing;
+        add(checkDrop);
 
-		menuItems = new FlxTypedGroup<FlxSprite>();
+		menuItems = new FlxTypedGroup<Alphabet>();
 		add(menuItems);
 
 		var scale:Float = 1;
@@ -109,26 +116,14 @@ class MainMenuState extends MusicBeatState
 
 		for (i in 0...optionShit.length)
 		{
-			var offset:Float = 108 - (Math.max(optionShit.length, 4) - 4) * 80;
-			var menuItem:FlxSprite = new FlxSprite(0, (i * 140)  + offset);
-			menuItem.scale.x = scale;
-			menuItem.scale.y = scale;
-			menuItem.frames = Paths.getSparrowAtlas('mainmenu/menu_' + optionShit[i]);
-			menuItem.animation.addByPrefix('idle', optionShit[i] + " basic", 24);
-			menuItem.animation.addByPrefix('selected', optionShit[i] + " white", 24);
-			menuItem.animation.play('idle');
+			var menuItem:Alphabet = new Alphabet(0,50 + (i * 100), optionShit[i], true);
+			menuItem.targetY = i;
+			menuItem.changeX = false;
 			menuItem.ID = i;
-			menuItem.screenCenter(X);
 			menuItems.add(menuItem);
-			var scr:Float = (optionShit.length - 4) * 0.135;
-			if(optionShit.length < 6) scr = 0;
-			menuItem.scrollFactor.set(0, scr);
-			menuItem.antialiasing = ClientPrefs.globalAntialiasing;
-			//menuItem.setGraphicSize(Std.int(menuItem.width * 0.58));
-			menuItem.updateHitbox();
+			menuItem.x = FlxG.width - menuItem.width;
+			menuItem.snapToPosition();
 		}
-
-		FlxG.camera.follow(camFollowPos, null, 1);
 
 		var versionShit:FlxText = new FlxText(12, FlxG.height - 44, 0, "Psych Engine v" + psychEngineVersion, 12);
 		versionShit.scrollFactor.set();
@@ -219,9 +214,9 @@ class MainMenuState extends MusicBeatState
 					{
 						if (curSelected != spr.ID)
 						{
-							FlxTween.tween(spr, {alpha: 0}, 0.4, {
-								ease: FlxEase.quadOut,
-								onComplete: function(twn:FlxTween)
+							FlxTween.tween(spr, {x: FlxG.width + spr.width}, 1, {
+								ease: FlxEase.circOut,
+								onComplete: function(twen:FlxTween)
 								{
 									spr.kill();
 								}
@@ -229,6 +224,10 @@ class MainMenuState extends MusicBeatState
 						}
 						else
 						{
+							//spr.screenCenter(Y);
+							FlxTween.tween(spr, {x: 450, y: 250}, 1, {
+								ease: FlxEase.circOut			
+							});
 							FlxFlicker.flicker(spr, 1, 0.06, false, false, function(flick:FlxFlicker)
 							{
 								var daChoice:String = optionShit[curSelected];
@@ -266,36 +265,28 @@ class MainMenuState extends MusicBeatState
 
 		super.update(elapsed);
 
-		menuItems.forEach(function(spr:FlxSprite)
-		{
-			spr.screenCenter(X);
-		});
 	}
 
 	function changeItem(huh:Int = 0)
 	{
 		curSelected += huh;
-
+		var bullShit:Int = 0;
 		if (curSelected >= menuItems.length)
 			curSelected = 0;
 		if (curSelected < 0)
 			curSelected = menuItems.length - 1;
-
-		menuItems.forEach(function(spr:FlxSprite)
-		{
-			spr.animation.play('idle');
-			spr.updateHitbox();
-
-			if (spr.ID == curSelected)
+		for (menuItem in menuItems.members)
 			{
-				spr.animation.play('selected');
-				var add:Float = 0;
-				if(menuItems.length > 4) {
-					add = menuItems.length * 8;
+				menuItem.targetY = bullShit - curSelected;
+				bullShit++;
+				menuItem.x = FlxG.width - menuItem.width;	
+				menuItem.alpha = 0.5;	
+				if (menuItem.targetY == 0)
+				{
+					menuItem.alpha = 1;	
+					menuItem.x = FlxG.width - menuItem.width - 100;
+					// item.setGraphicSize(Std.int(item.width));
 				}
-				camFollow.setPosition(spr.getGraphicMidpoint().x, spr.getGraphicMidpoint().y - add);
-				spr.centerOffsets();
 			}
-		});
 	}
 }

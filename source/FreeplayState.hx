@@ -130,7 +130,7 @@ class FreeplayState extends MusicBeatState
 		{
 			var songText:Alphabet = new Alphabet(FlxG.width / 2, 320, songs[i].songName, true);
 			songText.isMenuItem = true;
-			songText.targetY = i - curSelected;
+			songText.targetY = i;
 			songText.changeX = false;
 			grpSongs.add(songText);
 
@@ -147,13 +147,9 @@ class FreeplayState extends MusicBeatState
 			icon.x = 100;
 			icon.scale.set(1.3,1.3);
 
-			// using a FlxGroup is too much fuss!
+
 			iconArray.push(icon);
 			add(icon);
-
-			// songText.x += 40;
-			// DONT PUT X IN THE FIRST PARAMETER OF new ALPHABET() !!
-			// songText.screenCenter(X);
 		}
 		WeekData.setDirectoryFromWeek();
 
@@ -439,7 +435,11 @@ class FreeplayState extends MusicBeatState
 				zoomnow = true;
 				Conductor.changeBPM(PlayState.SONG.bpm);
 				checkDrop.velocity.set(PlayState.SONG.bpm,PlayState.SONG.bpm);
+				if (ClientPrefs.discordClient == 'Extended')
 				DiscordClient.changePresence("In Freeplay Menu ("+ Paths.currentModDirectory + ")", "Listening To: " + firstLetterUpperCase(PlayState.SONG.song));
+				else
+				DiscordClient.changePresence("In Freeplay Menu", "Listening To: " + firstLetterUpperCase(PlayState.SONG.song));
+
 				trace('Bro Listening to ' + PlayState.SONG.song);
 				#end
 			}
@@ -504,19 +504,20 @@ class FreeplayState extends MusicBeatState
 
 		for (item in grpSongs.members)
 		{
-			item.x = FlxMath.lerp(item.x, 150 + -40 * Math.abs(item.targetY), lerpVal);
 			item.targetY = bullShit - curSelected;
 			bullShit++;
-
-			item.alpha = 0.3;
-			// item.setGraphicSize(Std.int(item.width * 0.8));
-
-			if (item.targetY == 0)
-			{
-				var lastX:Float = item.x;
-					item.x = FlxMath.lerp(lastX, 350, lerpVal);
+			if(item.targetY == 0)
+				{
+					var lastX:Float = item.x;
+					item.screenCenter(X);
+					item.x = FlxMath.lerp(lastX, item.x + 0, lerpVal);
 					item.alpha = 1;
-			}
+				}
+				else
+				{
+					item.alpha = 0.3;
+					item.x = FlxMath.lerp(item.x, 250 + -80 * Math.abs(item.targetY), lerpVal);
+				}
 		}
 		
 		super.update(elapsed);
@@ -587,6 +588,7 @@ class FreeplayState extends MusicBeatState
 		#if !switch
 		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
 		intendedRating = Highscore.getRating(songs[curSelected].songName, curDifficulty);
+		intendedMiss = Highscore.getMiss(songs[curSelected].songName, curDifficulty);
 		#end
 
 		Paths.currentModDirectory = songs[curSelected].folder;
