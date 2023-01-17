@@ -60,6 +60,7 @@ class FreeplayState extends MusicBeatState
 	var magenta:FlxSprite;
 	var intendedColor:Int;
 	var colorTween:FlxTween;
+	var orgSONG:String;
 
 	override function create()
 	{
@@ -69,7 +70,6 @@ class FreeplayState extends MusicBeatState
 		persistentUpdate = true;
 		PlayState.isStoryMode = false;
 		WeekData.reloadWeekFiles(false);
-
 		#if desktop
 		// Updating Discord Rich Presence
 		DiscordClient.changePresence("In Freeplay Menu", null);
@@ -176,10 +176,9 @@ class FreeplayState extends MusicBeatState
 				songText.snapToPosition();
 	
 				Paths.currentModDirectory = songs[i].folder;
-				var icon:HealthIcon = new HealthIcon(songs[i].songCharacter);
-				icon.x = scoreText.x - 50;
-				icon.y = scoreText.y + 200;
 	
+				var icon:HealthIcon = new HealthIcon(songs[i].songCharacter);
+				icon.y = scoreText.y + 200;
 	
 				iconArray.push(icon);
 				add(icon);
@@ -540,7 +539,7 @@ class FreeplayState extends MusicBeatState
 				else
 				{
 					item.alpha = 0.3;
-					item.x = FlxMath.lerp(item.x, 250 + -80 * Math.abs(item.targetY), lerpVal);
+					item.x = FlxMath.lerp(item.x, 500 + -300 * Math.abs(item.targetY), lerpVal);
 				}
 		}
 		
@@ -592,7 +591,6 @@ class FreeplayState extends MusicBeatState
 		if(playSound) FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 
 		curSelected += change;
-
 		if (curSelected < 0)
 			curSelected = songs.length - 1;
 		if (curSelected >= songs.length)
@@ -669,11 +667,15 @@ class FreeplayState extends MusicBeatState
 	}
 	private function positionHighscore() {
 		scoreText.x = FlxG.width - scoreText.width - 6;
-
+		
 		scoreBG.scale.x = FlxG.width - scoreText.x + 6;
 		scoreBG.x = FlxG.width - (scoreBG.scale.x / 2);
 		diffText.x = Std.int(scoreBG.x + (scoreBG.width / 2));
 		diffText.x -= diffText.width / 2;
+		for (i in 0...iconArray.length)
+			{
+				iconArray[i].x = scoreBG.x - 70;
+			}
 	}
 }
 
