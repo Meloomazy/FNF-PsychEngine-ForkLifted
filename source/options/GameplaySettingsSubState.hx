@@ -49,13 +49,6 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 			false); //Default value
 		addOption(option);
 
-		var option:Option = new Option('Camera Tween',
-		'If checked, the camera will Tweened instead Lerped.\n(i do not recommend enabled this when you have camera follow script)',
-		'cameraBeTween',
-		'bool',
-		false);
-		addOption(option);
-
 		var option:Option = new Option('Middlescroll',
 			'If checked, your notes get centered.',
 			'middleScroll',

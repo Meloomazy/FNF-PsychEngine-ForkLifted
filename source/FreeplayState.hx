@@ -38,6 +38,7 @@ class FreeplayState extends MusicBeatState
 	private static var lastDifficultyName:String = '';
 	public static var isWithVoices:Bool = false;
 	public static var zoomnow:Bool = false;
+	var canSwitch:Bool = true;
 
 	var scoreBG:FlxSprite;
 	var scoreText:FlxText;
@@ -112,22 +113,19 @@ class FreeplayState extends MusicBeatState
 			}
 		}*/
 
-		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
-		bg.antialiasing = ClientPrefs.globalAntialiasing;
-		add(bg);
-
 		magenta = new FlxSprite(-80).loadGraphic(Paths.image('menuDesat'));
-		magenta.scrollFactor.set(0, 0);
-		magenta.setGraphicSize(Std.int(magenta.width * 1.175));
 		magenta.updateHitbox();
 		magenta.screenCenter();
-		magenta.visible = false;
 		magenta.antialiasing = ClientPrefs.globalAntialiasing;
 		magenta.color = 0xFFfd719b;
 		add(magenta);
-		
+
+		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
+		bg.antialiasing = ClientPrefs.globalAntialiasing;
 		bg.screenCenter();
-	    checkDrop = new FlxBackdrop(Paths.image('checkaboard'), XY, -0, -0);
+		add(bg);
+
+		checkDrop = new FlxBackdrop(Paths.image('checkaboard'), XY, -0, -0);
 		checkDrop.scrollFactor.set();
 		checkDrop.scale.set(0.7,0.7);
 		checkDrop.screenCenter(X);
@@ -448,11 +446,7 @@ class FreeplayState extends MusicBeatState
 				zoomnow = true;
 				Conductor.changeBPM(PlayState.SONG.bpm);
 				checkDrop.velocity.set(PlayState.SONG.bpm,PlayState.SONG.bpm);
-				if (ClientPrefs.discordClient == 'Extended')
 				DiscordClient.changePresence("In Freeplay Menu ("+ Paths.currentModDirectory + ")", "Listening To: " + firstLetterUpperCase(PlayState.SONG.song));
-				else
-				DiscordClient.changePresence("In Freeplay Menu", "Listening To: " + firstLetterUpperCase(PlayState.SONG.song));
-
 				trace('Bro Listening to ' + PlayState.SONG.song);
 				#end
 			}
@@ -460,6 +454,8 @@ class FreeplayState extends MusicBeatState
 
 		else if (accepted)
 		{
+		if (canSwitch){
+			canSwitch = false;
 			FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
 			if(ClientPrefs.flashing) FlxFlicker.flicker(bg, 1.1, 0.15, false);
 			FlxFlicker.flicker(grpSongs.members[curSelected], 1, 0.06, false, false, function(flick:FlxFlicker)
@@ -497,6 +493,7 @@ class FreeplayState extends MusicBeatState
 							
 					destroyFreeplayVocals();
 				});
+			}
 		}
 		else if(controls.RESET)
 		{
@@ -566,6 +563,7 @@ class FreeplayState extends MusicBeatState
 
 	function changeDiff(change:Int = 0)
 	{
+		if (canSwitch){
 		curDifficulty += change;
 
 		if (curDifficulty < 0)
@@ -584,10 +582,12 @@ class FreeplayState extends MusicBeatState
 		PlayState.storyDifficulty = curDifficulty;
 		diffText.text = '< ' + CoolUtil.difficultyString() + ' >';
 		positionHighscore();
+}
 	}
 
 	function changeSelection(change:Int = 0, playSound:Bool = true)
 	{
+		if (canSwitch) {
 		if(playSound) FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 
 		curSelected += change;
@@ -659,6 +659,7 @@ class FreeplayState extends MusicBeatState
 		{
 			curDifficulty = newPos;
 		}
+	}
 	}
    // thanks raltyro
 	public static function firstLetterUpperCase(strData:String):String {

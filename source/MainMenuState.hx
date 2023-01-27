@@ -21,6 +21,14 @@ import lime.app.Application;
 import Achievements;
 import editors.MasterEditorMenu;
 import flixel.input.keyboard.FlxKey;
+#if sys
+import sys.FileSystem;
+import sys.io.File;
+#end
+
+#if VIDEOS_ALLOWED
+import VideoHandler;
+#end
 
 using StringTools;
 
@@ -47,7 +55,6 @@ class MainMenuState extends MusicBeatState
 	var camFollow:FlxObject;
 	var camFollowPos:FlxObject;
 	var debugKeys:Array<FlxKey>;
-
 	override function create()
 	{
 		#if MODS_ALLOWED
@@ -121,10 +128,13 @@ class MainMenuState extends MusicBeatState
 			menuItem.changeX = false;
 			menuItem.ID = i;
 			menuItems.add(menuItem);
-			menuItem.x = FlxG.width - menuItem.width;
 			menuItem.snapToPosition();
 		}
 
+		var versionShit:FlxText = new FlxText(12, FlxG.height - 64, 0, "ForkLifted v0.0.1", 12);
+		versionShit.scrollFactor.set();
+		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		add(versionShit);
 		var versionShit:FlxText = new FlxText(12, FlxG.height - 44, 0, "Psych Engine v" + psychEngineVersion, 12);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -167,15 +177,13 @@ class MainMenuState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
+		
 		if (FlxG.sound.music.volume < 0.8)
 		{
 			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
 			if(FreeplayState.vocals != null) FreeplayState.vocals.volume += 0.5 * elapsed;
 		}
-
-		var lerpVal:Float = CoolUtil.boundTo(elapsed * 7.5, 0, 1);
-		camFollowPos.setPosition(FlxMath.lerp(camFollowPos.x, camFollow.x, lerpVal), FlxMath.lerp(camFollowPos.y, camFollow.y, lerpVal));
-
+	
 		if (!selectedSomethin)
 		{
 			if (controls.UI_UP_P)
@@ -214,7 +222,7 @@ class MainMenuState extends MusicBeatState
 					{
 						if (curSelected != spr.ID)
 						{
-							FlxTween.tween(spr, {x: FlxG.width + spr.width}, 1, {
+							FlxTween.tween(spr, {x: -FlxG.width - spr.width}, 1, {
 								ease: FlxEase.circOut,
 								onComplete: function(twen:FlxTween)
 								{
@@ -225,7 +233,7 @@ class MainMenuState extends MusicBeatState
 						else
 						{
 							//spr.screenCenter(Y);
-							FlxTween.tween(spr, {x: 450, y: 250}, 1, {
+							FlxTween.tween(spr, {y: 250}, 1, {
 								ease: FlxEase.circOut			
 							});
 							FlxFlicker.flicker(spr, 1, 0.06, false, false, function(flick:FlxFlicker)
@@ -261,6 +269,26 @@ class MainMenuState extends MusicBeatState
 				MusicBeatState.switchState(new MasterEditorMenu());
 			}
 			#end
+			
+			var lerpVal:Float = CoolUtil.boundTo(elapsed * 12, 0, 1);
+			var bullShit:Int = 0;
+			for (item in menuItems.members)
+				{
+					item.targetY = bullShit - curSelected;
+					bullShit++;
+					if(item.targetY == 0)
+						{
+							var lastX:Float = item.x;
+							item.screenCenter(X);
+							item.x = FlxMath.lerp(lastX, item.x + 0, lerpVal);
+							item.alpha = 1;	
+						}
+						else
+						{
+							item.alpha = 0.8;	
+							item.x = FlxMath.lerp(item.x, 30 + -0 * Math.abs(item.targetY), lerpVal);
+						}
+				}
 		}
 
 		super.update(elapsed);
@@ -270,23 +298,9 @@ class MainMenuState extends MusicBeatState
 	function changeItem(huh:Int = 0)
 	{
 		curSelected += huh;
-		var bullShit:Int = 0;
 		if (curSelected >= menuItems.length)
 			curSelected = 0;
 		if (curSelected < 0)
 			curSelected = menuItems.length - 1;
-		for (menuItem in menuItems.members)
-			{
-				menuItem.targetY = bullShit - curSelected;
-				bullShit++;
-				menuItem.x = FlxG.width - menuItem.width;	
-				menuItem.alpha = 0.5;	
-				if (menuItem.targetY == 0)
-				{
-					menuItem.alpha = 1;	
-					menuItem.x = FlxG.width - menuItem.width - 100;
-					// item.setGraphicSize(Std.int(item.width));
-				}
-			}
 	}
 }

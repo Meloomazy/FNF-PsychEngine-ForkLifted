@@ -2,6 +2,8 @@ package options;
 
 #if desktop
 import Discord.DiscordClient;
+import discord_rpc.DiscordRpc;
+
 #end
 import flash.text.TextField;
 import flixel.FlxG;
@@ -24,7 +26,7 @@ import flixel.util.FlxTimer;
 import flixel.input.keyboard.FlxKey;
 import flixel.graphics.FlxGraphic;
 import Controls;
-
+import Discord;
 using StringTools;
 
 class VisualsUISubState extends BaseOptionsMenu
@@ -123,14 +125,13 @@ class VisualsUISubState extends BaseOptionsMenu
 		addOption(option);
 		option.onChange = onChangePauseMusic;
 		
-		var option:Option = new Option('Discord Presence:',
-		"What type do you prefer for the Discord Presence?",
+		var option:Option = new Option('Discord Presence',
+		"If unchecked, Discord Presence will be Invisible\nMore like hiding song you play and stuff",
 		'discordClient',
-		'string',
-		'Extended',
-		['None', 'Extended', 'Minimum']);
+		'bool',
+		true);
 		addOption(option);
-
+		option.onChange = onChangeDiscord;
 		#if CHECK_FOR_UPDATES
 		var option:Option = new Option('Check for Updates',
 			'On Release builds, turn this on to check for updates when you start the game.',
@@ -160,6 +161,22 @@ class VisualsUISubState extends BaseOptionsMenu
 
 		changedMusic = true;
 	}
+	function onChangeDiscord()
+		{
+			if(ClientPrefs.discordClient) {
+				DiscordRpc.presence({
+					details: '',
+					state: ''
+				});	
+			}
+			if(!ClientPrefs.discordClient) {
+				DiscordRpc.presence({
+					details: '',
+					state: ''
+				});	
+			}
+		
+		}
 	function onChangeAutoFocus()
 		{
 			if(!ClientPrefs.autoFocus)

@@ -1,4 +1,3 @@
-package;
 
 import flixel.util.FlxColor;
 import flixel.tweens.FlxEase;
@@ -10,7 +9,7 @@ import flixel.util.FlxTimer;
 import flixel.text.FlxText;
 import openfl.utils.Assets as OpenFlAssets;
 #if VIDEOS_ALLOWED
-import vlc.MP4Handler;
+import VideoHandler;
 #end
 
 #if sys
@@ -28,13 +27,13 @@ class PsychSplash extends FlxState
     var thestate:FlxState = new TitleState();
     var randomSplash:FlxText;
     var skipSplash:FlxText;
-    var raresplash:Bool;
+    var textNeeded:String = '';
 
-    var unfunnyVideos:Array<String> = [
-    'mrbreast',
-    'sex'];
+    // I LOVE RANDOM FUCKING VIDEOS!!!!
+    var unfunnyVideos:Array<String> = ['nuhuh','mrbreast','sex','damnbro','fooled'];
+
     // i love psych engine community server
-    var therandomText:Array<String> = [
+    var psychServerText:Array<String> = [
     "'burp'  - Ache",
     "'nyaa~~'  - Swords",
     "'hmmmm (scratches testicles)'  - Stick-Pi",
@@ -44,7 +43,9 @@ class PsychSplash extends FlxState
     "'DO YOU WANT DA FOCKIN PHONE' - TPRS\nno  - Laztrix",
     "'psych,,, enenennegine,,,'  - Doggo",
     "'markiplier'  - boidavidman",
-    "'Imagine yourself in a Frozen Forest...You're standing in a clearing. Trees around you so tall, they touch the sky…'  - Skry",
+    "'Imagine yourself in a Frozen Forest...'  - Skry"];
+
+    var forkLiftText:Array<String> = [
     "DO NOT CALL IT A FRICKIN ENGINE ITS A FRICKIN FORK",
     "my balls itch",
     "your mom :trollface:",
@@ -61,12 +62,12 @@ class PsychSplash extends FlxState
         skipSplash.setFormat("VCR OSD Mono", 15, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
         add(skipSplash);
 
-        if (FlxG.random.bool(95))
-            raresplash = false;
+        if (FlxG.random.bool(65)) 
+            textNeeded = forkLiftText[FlxG.random.int(1, forkLiftText.length)];
         else
-            raresplash = true;
+            textNeeded = psychServerText[FlxG.random.int(1, psychServerText.length)];
 
-        if (!raresplash){
+        if (FlxG.random.bool(95)){
        
         splash = new FlxSprite(0,-100).loadGraphic(Paths.image('thepsych'));
 		splash.screenCenter(X);
@@ -74,7 +75,7 @@ class PsychSplash extends FlxState
         splash.alpha = 0;
         add(splash);
 
-        randomSplash = new FlxText(-0, 0, 0,therandomText[FlxG.random.int(0, therandomText.length)] , 24);
+        randomSplash = new FlxText(-0, 0, 0, textNeeded, 24);
         randomSplash.setFormat("VCR OSD Mono", 18, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
         add(randomSplash);
 
@@ -148,7 +149,7 @@ class PsychSplash extends FlxState
         {
             new FlxTimer().start(1, function(guh:FlxTimer)
                 {
-                    startVideo('unfunny/'+ unfunnyVideos[FlxG.random.int(0, unfunnyVideos.length)]);
+                    startVideo('unfunny/'+ unfunnyVideos[FlxG.random.int(1, unfunnyVideos.length)]);
                 });
         }
 
@@ -176,7 +177,7 @@ class PsychSplash extends FlxState
                 return;
             }
     
-            var video:MP4Handler = new MP4Handler();
+            var video:VideoHandler = new VideoHandler();
             video.playVideo(filepath);
             video.finishCallback = function()
             {

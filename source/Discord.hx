@@ -77,7 +77,7 @@ class DiscordClient
 		{
 			endTimestamp = startTimestamp + endTimestamp;
 		}
-		if (ClientPrefs.discordClient != 'None')
+		if (ClientPrefs.discordClient)
 		{
 			DiscordRpc.presence({
 				details: details,

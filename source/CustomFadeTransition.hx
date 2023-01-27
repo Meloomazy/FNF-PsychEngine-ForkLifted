@@ -42,11 +42,11 @@ class CustomFadeTransition extends MusicBeatSubstate {
 
 		if(isTransIn) {
 			transGradient.y = transBlack.y - transBlack.height;
-			FlxTween.tween(transGradient, {y: transGradient.height + 50}, 0.5, {
+			FlxTween.tween(transGradient, {y: transGradient.height + 50}, 0.8, {
 				onComplete: function(twn:FlxTween) {
 					close();
 				},
-			ease: FlxEase.cubeInOut});
+			ease: FlxEase.quartInOut});
 		} else {
 			transGradient.y = -transGradient.height;
 			transBlack.y = transGradient.y - transBlack.height + 50;
@@ -56,7 +56,7 @@ class CustomFadeTransition extends MusicBeatSubstate {
 						finishCallback();
 					}
 				},
-			ease: FlxEase.cubeInOut});
+			ease: FlxEase.quartInOut});
 		}
 
 		if(nextCamera != null) {

@@ -72,7 +72,7 @@ import sys.io.File;
 #end
 
 #if VIDEOS_ALLOWED
-import vlc.MP4Handler;
+import VideoHandler;
 #end
 
 using StringTools;
@@ -329,6 +329,7 @@ class PlayState extends MusicBeatState
 
 	override public function create()
 	{
+
 		//trace('Playback Rate: ' + playbackRate);
 		Paths.clearStoredMemory();
 
@@ -425,11 +426,7 @@ class PlayState extends MusicBeatState
 		}
 		else
 		{
-			if (ClientPrefs.discordClient == 'Extended')
-				detailsText = "Freeplay (" + Paths.currentModDirectory + ")";
-			else
-				detailsText = "Freeplay";
-
+			detailsText = "Freeplay (" + Paths.currentModDirectory + ")";
 		}
 
 		// String for when the game is paused
@@ -1623,7 +1620,7 @@ class PlayState extends MusicBeatState
 			return;
 		}
 
-		var video:MP4Handler = new MP4Handler();
+		var video:VideoHandler = new VideoHandler();
 		video.playVideo(filepath);
 		video.finishCallback = function()
 		{
@@ -2403,11 +2400,7 @@ class PlayState extends MusicBeatState
 
 		#if desktop
 		// Updating Discord Rich Presence (with Time Left)
-		if (ClientPrefs.discordClient == 'Extended')
 		DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter(), true, songLength);
-		else if (ClientPrefs.discordClient == 'Minimum')
-		DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
-
 		#end
 		setOnLuas('songLength', songLength);
 		callOnLuas('onSongStart', []);
@@ -2815,7 +2808,6 @@ class PlayState extends MusicBeatState
 			#if desktop
 			if (startTimer != null && startTimer.finished)
 			{
-				if (ClientPrefs.discordClient == 'Extended')
 				DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter(), true, songLength - Conductor.songPosition - ClientPrefs.noteOffset);
 			}
 			else
@@ -3022,10 +3014,8 @@ class PlayState extends MusicBeatState
 
 		if(!inCutscene) {
 			var lerpVal:Float = CoolUtil.boundTo(elapsed * 2.4 * cameraSpeed * playbackRate, 0, 1);
-			if (!ClientPrefs.cameraBeTween)
-				{
-					camFollowPos.setPosition(FlxMath.lerp(camFollowPos.x, camFollow.x, lerpVal), FlxMath.lerp(camFollowPos.y, camFollow.y, lerpVal));
-				}
+				camFollowPos.setPosition(FlxMath.lerp(camFollowPos.x, camFollow.x, lerpVal), FlxMath.lerp(camFollowPos.y, camFollow.y, lerpVal));
+				
 			if(!startingSong && !endingSong && boyfriend.animation.curAnim != null && boyfriend.animation.curAnim.name.startsWith('idle')) {
 				boyfriendIdleTime += elapsed;
 				if(boyfriendIdleTime >= 0.15) { // Kind of a mercy thing for making the achievement easier to get as it's apparently frustrating to some playerss
@@ -3831,16 +3821,10 @@ class PlayState extends MusicBeatState
 
 		if (gf != null && SONG.notes[curSection].gfSection)
 		{
-			if (!ClientPrefs.cameraBeTween)
-				{
-					camFollow.set(gf.getMidpoint().x, gf.getMidpoint().y);
-					camFollow.x += gf.cameraPosition[0] + girlfriendCameraOffset[0];
-					camFollow.y += gf.cameraPosition[1] + girlfriendCameraOffset[1];
-				}
-			else
-				{
-					camMove(gf.getMidpoint().x + gf.cameraPosition[0] + girlfriendCameraOffset[0],gf.getMidpoint().y + gf.cameraPosition[1] + girlfriendCameraOffset[1]);
-				}
+				camFollow.set(gf.getMidpoint().x, gf.getMidpoint().y);
+				camFollow.x += gf.cameraPosition[0] + girlfriendCameraOffset[0];
+				camFollow.y += gf.cameraPosition[1] + girlfriendCameraOffset[1];
+
 			tweenCamIn();
 			callOnLuas('onMoveCamera', ['gf']);
 			return;
@@ -3859,47 +3843,23 @@ class PlayState extends MusicBeatState
 	}
 
 	var cameraTwn:FlxTween;
-	var cmTwn:FlxTween;
 
-	public function camMove(_x:Float, _y:Float, ?_onComplete:Null<TweenCallback> = null):Void{
-
-		if(_onComplete == null){
-			_onComplete = function(cmtwencam:FlxTween){};
-		}
-		if(cmTwn != null){
-			cmTwn.cancel();
-		}
-		cmTwn = FlxTween.tween(camFollowPos, {x: _x, y: _y}, cameraSpeed, {ease: FlxEase.cubeInOut, onComplete: _onComplete});
-
-	}
 	public function moveCamera(isDad:Bool)
 	{
 		if(isDad)
 		{
-			if (!ClientPrefs.cameraBeTween)
-				{
-					camFollow.set(dad.getMidpoint().x + 150, dad.getMidpoint().y - 100);
-					camFollow.x += dad.cameraPosition[0] + opponentCameraOffset[0];
-					camFollow.y += dad.cameraPosition[1] + opponentCameraOffset[1];
-				}
-			else
-				{
-					camMove(dad.getMidpoint().x + 150 + dad.cameraPosition[0] + opponentCameraOffset[0],dad.getMidpoint().y - 100 - dad.cameraPosition[1] + opponentCameraOffset[1]);
-				}
+				camFollow.set(dad.getMidpoint().x + 150, dad.getMidpoint().y - 100);
+				camFollow.x += dad.cameraPosition[0] + opponentCameraOffset[0];
+				camFollow.y += dad.cameraPosition[1] + opponentCameraOffset[1];
+			
 			tweenCamIn();
 		}
 		else
 		{
-			if (!ClientPrefs.cameraBeTween)
-				{
+			
 				camFollow.set(boyfriend.getMidpoint().x - 100, boyfriend.getMidpoint().y - 100);
 				camFollow.x -= boyfriend.cameraPosition[0] - boyfriendCameraOffset[0];
 				camFollow.y += boyfriend.cameraPosition[1] + boyfriendCameraOffset[1];
-				}
-			else
-				{
-					camMove(boyfriend.getMidpoint().x - 100 - boyfriend.cameraPosition[0] + boyfriendCameraOffset[0],boyfriend.getMidpoint().y - 100 - boyfriend.cameraPosition[1] + boyfriendCameraOffset[1]);
-				}
 		
 			if (Paths.formatToSongPath(SONG.song) == 'tutorial' && cameraTwn == null && FlxG.camera.zoom != 1)
 			{
