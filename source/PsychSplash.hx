@@ -9,7 +9,7 @@ import flixel.util.FlxTimer;
 import flixel.text.FlxText;
 import openfl.utils.Assets as OpenFlAssets;
 #if VIDEOS_ALLOWED
-import VideoHandler;
+import vlc.MP4Handler;
 #end
 
 #if sys
@@ -177,7 +177,7 @@ class PsychSplash extends FlxState
                 return;
             }
     
-            var video:VideoHandler = new VideoHandler();
+            var video:MP4Handler = new MP4Handler();
             video.playVideo(filepath);
             video.finishCallback = function()
             {
