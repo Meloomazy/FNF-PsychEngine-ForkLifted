@@ -21,14 +21,6 @@ import lime.app.Application;
 import Achievements;
 import editors.MasterEditorMenu;
 import flixel.input.keyboard.FlxKey;
-#if sys
-import sys.FileSystem;
-import sys.io.File;
-#end
-
-#if VIDEOS_ALLOWED
-import VideoHandler;
-#end
 
 using StringTools;
 
