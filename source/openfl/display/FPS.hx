@@ -6,7 +6,7 @@ import openfl.filters.ShaderFilter;
 import openfl.system.System;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
-
+// thank you vs impostor :grin:
 class FPS extends TextField
 {
 	/**

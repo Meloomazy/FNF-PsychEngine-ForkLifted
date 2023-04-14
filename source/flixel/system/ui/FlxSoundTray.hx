@@ -73,7 +73,7 @@ class FlxSoundTray extends Sprite
 		text.gridFitType = GridFitType.PIXEL;
 		#else
 		#end
-		var dtf:TextFormat = new TextFormat("VCR OSD Mono", 8, 0xd1f78c);
+		var dtf:TextFormat = new TextFormat("VCR OSD Mono", 8, 0x0D61CF);
 		dtf.align = TextFormatAlign.CENTER;
 		text.defaultTextFormat = dtf;
 		addChild(text);
@@ -134,11 +134,9 @@ class FlxSoundTray extends Sprite
 	public function show(Silent:Bool = false):Void
 	{
 		if (!Silent)
-		{
-            var sound = Paths.sound("dialogue");
-			if (sound != null)
-				FlxG.sound.play(sound);
-		}
+			FlxG.sound.play(Paths.sound("dialogue"));
+		else
+			FlxG.sound.play(Paths.sound("dialogue"));
 
 		_timer = 1;
 		y = 0;

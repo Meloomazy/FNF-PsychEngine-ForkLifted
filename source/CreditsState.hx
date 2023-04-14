@@ -82,7 +82,7 @@ class CreditsState extends MusicBeatState
 
 		var pisspoop:Array<Array<String>> = [ //Name - Icon name - Description - Link - BG Color
 			['ForkLifted'],
-			['Laztrix', 			'none', 			'Main Programmer of this stupid Fork\n(do not type "lazt" in Main Menu :trollface: they all are randomized)','https://twitter.com/non_Laztrix', 'F44556'],
+			['Laztrix', 			'none', 			'Main Programmer of this stupid Fork\n(did you know, a video sometimes can be seen in the intro and it is random :D)','https://twitter.com/non_Laztrix', 'F44556'],
 			[''],
 			['Psych Engine Team'],
 			['Shadow Mario',		'shadowmario',		'Main Programmer of Psych Engine',								'https://twitter.com/Shadow_Mario_',	'444444'],

@@ -27,7 +27,6 @@ class PsychSplash extends FlxState
 {
 	var checkDrop:FlxBackdrop;
     var splash:FlxSprite;
-    var bg:FlxSprite;
     var splashT:FlxSprite;
     var thestate:FlxState = new TitleState();
     var randomSplash:FlxText;
@@ -63,10 +62,9 @@ class PsychSplash extends FlxState
 	override function create()
 	{
 
-        bg = new FlxSprite(0,0).loadGraphic(Paths.image('menuDesat'));
+        var bg:FlxSprite = new FlxSprite(0,0,Paths.image('bgSplash'));
 		bg.screenCenter(X);
         add(bg);
-
         
 		checkDrop = new FlxBackdrop(Paths.image('checkaboardMagenta'), XY, -0, -0);
 		checkDrop.scrollFactor.set();
@@ -82,9 +80,9 @@ class PsychSplash extends FlxState
         add(skipSplash);
 
         if (FlxG.random.bool(65)) 
-            textNeeded = forkLiftText[FlxG.random.int(0, forkLiftText.length)];
+            textNeeded = forkLiftText[FlxG.random.int(1, forkLiftText.length)];
         else
-            textNeeded = psychServerText[FlxG.random.int(0, psychServerText.length)];
+            textNeeded = psychServerText[FlxG.random.int(1, psychServerText.length)];
 
         if (FlxG.random.bool(80)){
        
@@ -170,7 +168,7 @@ class PsychSplash extends FlxState
         {
             new FlxTimer().start(1, function(guh:FlxTimer)
                 {
-                    startVideo('unfunny/'+ unfunnyVideos[FlxG.random.int(0, unfunnyVideos.length)]);
+                    startVideo('unfunny/'+ unfunnyVideos[FlxG.random.int(0, unfunnyVideos.length-1)]);
                 });
         }
 
@@ -179,7 +177,11 @@ class PsychSplash extends FlxState
 
     override function update(elapsed) 
     {
-        if (FlxG.keys.justPressed.SPACE || FlxG.keys.justPressed.ENTER)   FlxG.switchState(thestate);
+        if (FlxG.keys.justPressed.SPACE || FlxG.keys.justPressed.ENTER)
+            {
+        
+                FlxG.switchState(thestate);
+            }
 
         super.update(elapsed);
     }
@@ -202,6 +204,7 @@ class PsychSplash extends FlxState
             video.playVideo(filepath);
             video.finishCallback = function()
             {
+
                 FlxG.switchState(thestate);
                 return;
             }

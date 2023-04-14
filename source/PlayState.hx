@@ -4099,7 +4099,7 @@ class PlayState extends MusicBeatState
 	public var showCombo:Bool = false;
 	public var showComboNum:Bool = true;
 	public var showRating:Bool = true;
-
+	public var ratingsCamera:String = 'camHUD';
 	private function cachePopUpScore()
 	{
 		var pixelShitPart1:String = '';

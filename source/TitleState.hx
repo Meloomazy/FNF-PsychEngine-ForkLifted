@@ -11,6 +11,7 @@ import flixel.addons.display.FlxGridOverlay;
 import flixel.addons.transition.FlxTransitionSprite.GraphicTransTileDiamond;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.addons.transition.TransitionData;
+import flixel.addons.display.FlxBackdrop;
 import haxe.Json;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
@@ -33,6 +34,7 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
+import flixel.util.FlxGradient;
 import flixel.util.FlxTimer;
 import openfl.Assets;
 
@@ -62,14 +64,12 @@ class TitleState extends MusicBeatState
 	var credTextShit:Alphabet;
 	var textGroup:FlxGroup;
 	var ngSpr:FlxSprite;
-	
 	var titleTextColors:Array<FlxColor> = [0xFF33FFFF, 0xFF3333CC];
 	var titleTextAlphas:Array<Float> = [1, .64];
 
 	var curWacky:Array<String> = [];
 
 	var wackyImage:FlxSprite;
-
 	#if TITLE_SCREEN_EASTER_EGG
 	var easterEggKeys:Array<String> = [
 		'SHADOW', 'RIVER', 'SHUBS', 'BBPANZU'
@@ -262,14 +262,23 @@ class TitleState extends MusicBeatState
 
 		if (titleJSON.backgroundSprite != null && titleJSON.backgroundSprite.length > 0 && titleJSON.backgroundSprite != "none"){
 			bg.loadGraphic(Paths.image(titleJSON.backgroundSprite));
+			add(bg);
 		}else{
 			bg.makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
+			add(bg);
+
+			var checkDrop:FlxBackdrop = new FlxBackdrop(Paths.image('checkaboard'), XY, -0, -0);
+			checkDrop.scrollFactor.set();
+			checkDrop.scale.set(0.7,0.7);
+			checkDrop.screenCenter(X);
+			checkDrop.velocity.set(150,80);
+			checkDrop.antialiasing = ClientPrefs.globalAntialiasing;
+			add(checkDrop);
 		}
 
 		// bg.antialiasing = ClientPrefs.globalAntialiasing;
 		// bg.setGraphicSize(Std.int(bg.width * 0.6));
 		// bg.updateHitbox();
-		add(bg);
 
 		logoBl = new FlxSprite(titleJSON.titlex, titleJSON.titley);
 		logoBl.frames = Paths.getSparrowAtlas('logoBumpin');
@@ -369,9 +378,9 @@ class TitleState extends MusicBeatState
 		logo.screenCenter();
 		logo.antialiasing = ClientPrefs.globalAntialiasing;
 		// add(logo);
-
-		FlxTween.tween(logoBl, {y: logoBl.y + 30}, 1.2, {ease: FlxEase.cubeInOut, type: PINGPONG});
-		FlxTween.tween(logoBl, {angle: logoBl.angle	+ 5}, 1, {ease: FlxEase.smoothStepInOut, type: PINGPONG});
+		logoBl.angle = -5;
+		FlxTween.tween(logoBl, {y: logoBl.y + 30}, 1.2, {ease: FlxEase.quadInOut, type: PINGPONG});
+		FlxTween.tween(logoBl, {angle: 5}, 1, {ease: FlxEase.smoothStepInOut, type: PINGPONG});
 
 		credGroup = new FlxGroup();
 		add(credGroup);
@@ -607,6 +616,7 @@ class TitleState extends MusicBeatState
 	override function beatHit()
 	{
 		super.beatHit();
+	
 
 		if(logoBl != null)
 			logoBl.animation.play('bump', true);
