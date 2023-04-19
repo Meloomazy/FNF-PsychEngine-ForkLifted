@@ -74,7 +74,7 @@ class PsychSplash extends FlxState
 		checkDrop.alpha = 0;
         add(checkDrop);
 
-        skipSplash = new FlxText(0, 0, 1250, '[PRESS SPACE TO SKIP]' , 0);
+        skipSplash = new FlxText(0, 0, 1250, '[PRESS ACCEPT TO SKIP]' , 0);
         skipSplash.autoSize = false;
         skipSplash.setFormat("VCR OSD Mono", 15, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
         add(skipSplash);
@@ -84,7 +84,7 @@ class PsychSplash extends FlxState
         else
             textNeeded = psychServerText[FlxG.random.int(1, psychServerText.length)];
 
-        if (FlxG.random.bool(80)){
+        if (FlxG.random.bool(60)){
        
         splash = new FlxSprite(0,-900).loadGraphic(Paths.image('thepsych'));
 		splash.screenCenter(X);
@@ -168,49 +168,28 @@ class PsychSplash extends FlxState
         {
             new FlxTimer().start(1, function(guh:FlxTimer)
                 {
-                    startVideo('unfunny/'+ unfunnyVideos[FlxG.random.int(0, unfunnyVideos.length-1)]);
+                    var video = new MP4Handler();
+                        video.playVideo(Paths.video('unfunny/'+ unfunnyVideos[FlxG.random.int(0, unfunnyVideos.length-1)]));
+                        video.finishCallback = function() {
+                            
+                        };
+                        video.canSkip = true;
+                        video.skipKeys = [SPACE, ENTER];
                 });
         }
 
         super.create();
     }
 
-    override function update(elapsed) 
-    {
-        if (FlxG.keys.justPressed.SPACE || FlxG.keys.justPressed.ENTER)
-            {
-        
-                FlxG.switchState(thestate);
-            }
-
-        super.update(elapsed);
-    }
-     
-    function startVideo(name:String)
-        {
-            #if VIDEOS_ALLOWED
-            var filepath:String = Paths.video(name);
-            #if sys
-            if(!FileSystem.exists(filepath))
-            #else
-            if(!OpenFlAssets.exists(filepath))
-            #end
-            {
-                FlxG.log.warn('Couldnt find video file: ' + name);
-                return;
-            }
     
-            var video:MP4Handler = new MP4Handler();
-            video.playVideo(filepath);
-            video.finishCallback = function()
-            {
-
-                FlxG.switchState(thestate);
-                return;
-            }
-            #else
-            FlxG.log.warn('Platform not supported!');
-            return;
-            #end
+    override function update(elapsed) 
+        {
+            if (FlxG.keys.justPressed.SPACE || FlxG.keys.justPressed.ENTER)
+                {
+            
+                    FlxG.switchState(thestate);
+                }
+    
+            super.update(elapsed);
         }
 }
