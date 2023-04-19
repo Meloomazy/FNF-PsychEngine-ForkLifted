@@ -80,9 +80,9 @@ class PsychSplash extends FlxState
         add(skipSplash);
 
         if (FlxG.random.bool(65)) 
-            textNeeded = forkLiftText[FlxG.random.int(1, forkLiftText.length)];
+            textNeeded = forkLiftText[FlxG.random.int(0, forkLiftText.length)];
         else
-            textNeeded = psychServerText[FlxG.random.int(1, psychServerText.length)];
+            textNeeded = psychServerText[FlxG.random.int(0, psychServerText.length)];
 
         if (FlxG.random.bool(60)){
        
@@ -169,7 +169,7 @@ class PsychSplash extends FlxState
             new FlxTimer().start(1, function(guh:FlxTimer)
                 {
                     var video = new MP4Handler();
-                        video.playVideo(Paths.video('unfunny/'+ unfunnyVideos[FlxG.random.int(0, unfunnyVideos.length-1)]));
+                        video.playVideo(Paths.video('unfunny/'+ unfunnyVideos[FlxG.random.int(0, unfunnyVideos.length)]));
                         video.finishCallback = function() {
                             
                         };
