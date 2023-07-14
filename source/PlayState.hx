@@ -27,7 +27,7 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -3056,11 +3056,9 @@ class PlayState extends MusicBeatState
 
 		var mult:Float = FlxMath.lerp(1, iconP1.scale.x, CoolUtil.boundTo(1 - (elapsed * 9 * playbackRate), 0, 1));
 		iconP1.scale.set(mult, mult);
-		iconP1.updateHitbox();
 
 		var mult:Float = FlxMath.lerp(1, iconP2.scale.x, CoolUtil.boundTo(1 - (elapsed * 9 * playbackRate), 0, 1));
 		iconP2.scale.set(mult, mult);
-		iconP2.updateHitbox();
 
 		var iconOffset:Int = 26;
 
@@ -4099,7 +4097,6 @@ class PlayState extends MusicBeatState
 	public var showCombo:Bool = false;
 	public var showComboNum:Bool = true;
 	public var showRating:Bool = true;
-	public var ratingsCamera:String = 'camHUD';
 	private function cachePopUpScore()
 	{
 		var pixelShitPart1:String = '';
@@ -4173,14 +4170,10 @@ class PlayState extends MusicBeatState
 		}
 
 		rating.loadGraphic(Paths.image(pixelShitPart1 + daRating.image + pixelShitPart2));
-		if (ClientPrefs.ratingCameras)
-			{
-				rating.cameras = [camGame];
-			}
+		if (ClientPrefs.ratingWorld)
+			rating.cameras = [camGame];
 		else
-			{
-				rating.cameras = [camHUD];
-			}
+			rating.cameras = [camHUD];
 		rating.screenCenter();
 		rating.x = coolText.x - 40;
 		rating.y -= 60;
@@ -4192,14 +4185,10 @@ class PlayState extends MusicBeatState
 		rating.y -= ClientPrefs.comboOffset[1];
 
 		var comboSpr:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'combo' + pixelShitPart2));
-		if (ClientPrefs.ratingCameras)
-			{
-				comboSpr.cameras = [camGame];
-			}
+		if (ClientPrefs.ratingWorld)
+			comboSpr.cameras = [camGame];
 		else
-			{
-				comboSpr.cameras = [camHUD];
-			}
+			comboSpr.cameras = [camHUD];
 		comboSpr.screenCenter();
 		comboSpr.x = coolText.x;
 		comboSpr.acceleration.y = FlxG.random.int(200, 300) * playbackRate * playbackRate;
@@ -4265,14 +4254,10 @@ class PlayState extends MusicBeatState
 		for (i in seperatedScore)
 		{
 			var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'num' + Std.int(i) + pixelShitPart2));
-			if (ClientPrefs.ratingCameras)
-				{
-					numScore.cameras = [camGame];
-				}
+			if (ClientPrefs.ratingWorld)
+				numScore.cameras = [camGame];
 			else
-				{
-					numScore.cameras = [camHUD];
-				}
+				numScore.cameras = [camHUD];
 			numScore.screenCenter();
 			numScore.x = coolText.x + (43 * daLoop) - 90;
 			numScore.y += 80;
@@ -4789,11 +4774,7 @@ class PlayState extends MusicBeatState
 			}
 		}
 	}
-	public static function EaseIn(t:Float)
-	{
-   	 	return t * t;
-	}
-
+	
 	function spawnNoteSplashOnNote(note:Note) {
 		if (note != null && ClientPrefs.noteSplashes) {
 			var strum:StrumNote = playerStrums.members[note.noteData];
@@ -5072,9 +5053,6 @@ class PlayState extends MusicBeatState
 
 		iconP1.scale.set(1.2, 1.2);
 		iconP2.scale.set(1.2, 1.2);
-
-		iconP1.updateHitbox();
-		iconP2.updateHitbox();
 
 		if (gf != null && curBeat % Math.round(gfSpeed * gf.danceEveryNumBeats) == 0 && gf.animation.curAnim != null && !gf.animation.curAnim.name.startsWith("sing") && !gf.stunned)
 		{

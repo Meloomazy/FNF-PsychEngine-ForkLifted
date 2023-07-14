@@ -4,9 +4,11 @@ package options;
 import Discord.DiscordClient;
 #end
 import flash.text.TextField;
+import flash.geom.ColorTransform;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.display.FlxGridOverlay;
+import flixel.addons.display.FlxBackdrop;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
@@ -55,11 +57,26 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		DiscordClient.changePresence(rpcTitle, null);
 		#end
 		
-		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
-		bg.color = 0xFFea71fd;
+		var pathImage = ClientPrefs.darkMenu ? 'darkMenuBG' : 'menuDesat';
+		var bg:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image(pathImage));
+		bg.scrollFactor.set(0, 0);
+		if (ClientPrefs.darkMenu)
+			bg.color = 0xFF0400FF;
+		bg.setGraphicSize(Std.int(bg.width * 1.175));
+		bg.updateHitbox();
 		bg.screenCenter();
 		bg.antialiasing = ClientPrefs.globalAntialiasing;
 		add(bg);
+				
+		var checkDrop:FlxBackdrop = new FlxBackdrop(Paths.image('checkboard'), XY, -0, -0);
+		checkDrop.color = 0xFF194955;
+		checkDrop.alpha = 0.5;
+		checkDrop.scrollFactor.set();
+		checkDrop.screenCenter(X);
+		checkDrop.scale.set(0.5,0.5);
+		checkDrop.velocity.set(FlxG.random.int(-150, 150),FlxG.random.int(-80, 80));
+		checkDrop.antialiasing = ClientPrefs.globalAntialiasing;
+        add(checkDrop);
 
 		// avoids lagspikes while scrolling through menus!
 		grpOptions = new FlxTypedGroup<Alphabet>();
@@ -91,6 +108,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		{
 			var optionText:Alphabet = new Alphabet(290, 260, optionsArray[i].name, false);
 			optionText.isMenuItem = true;
+			optionText.color = FlxColor.LIME;
 			/*optionText.forceX = 300;
 			optionText.yMult = 90;*/
 			optionText.targetY = i;

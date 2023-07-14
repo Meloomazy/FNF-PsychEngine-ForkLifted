@@ -34,7 +34,7 @@ class VisualsUISubState extends BaseOptionsMenu
 	public function new()
 	{
 		title = 'Visuals and UI';
-		rpcTitle = 'Visuals & UI Settings Menu'; //for Discord Rich Presence
+		rpcTitle = 'Visuals & UI Settings Menu';
 
 		var option:Option = new Option('Note Splashes',
 			"If unchecked, hitting \"Sick!\" notes won't show particles.",
@@ -56,6 +56,13 @@ class VisualsUISubState extends BaseOptionsMenu
 			'string',
 			'Time Left',
 			['Time Left', 'Time Elapsed', 'Song Name', 'Disabled']);
+		addOption(option);
+
+		var option:Option = new Option('Dark Background',
+			"WIP Lmao",
+			'darkMenu',
+			'bool',
+			false);
 		addOption(option);
 
 		var option:Option = new Option('Flashing Lights',
@@ -81,7 +88,7 @@ class VisualsUISubState extends BaseOptionsMenu
 
 		var option:Option = new Option('Rating World',
 		"If checked, make the ratings into World instead Hud",
-		'ratingCameras',
+		'ratingWorld',
 		'bool',
 		false);
 		addOption(option);
@@ -126,7 +133,7 @@ class VisualsUISubState extends BaseOptionsMenu
 		option.onChange = onChangePauseMusic;
 		
 		var option:Option = new Option('Discord Presence',
-		"If unchecked, Discord Presence will be Invisible\nMore like hiding song you play and stuff",
+		"If unchecked, Discord Presence will be Invisible",
 		'discordClient',
 		'bool',
 		true);
@@ -163,19 +170,12 @@ class VisualsUISubState extends BaseOptionsMenu
 	}
 	function onChangeDiscord()
 		{
-			if(ClientPrefs.discordClient) {
-				DiscordRpc.presence({
-					details: '',
-					state: ''
-				});	
-			}
-			if(!ClientPrefs.discordClient) {
-				DiscordRpc.presence({
-					details: '',
-					state: ''
-				});	
-			}
-		
+			#if desktop
+			if(ClientPrefs.discordClient)
+				DiscordClient.shutdown();
+			else
+				DiscordClient.initialize();
+			#end
 		}
 	function onChangeAutoFocus()
 		{

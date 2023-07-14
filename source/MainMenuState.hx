@@ -28,7 +28,7 @@ class MainMenuState extends MusicBeatState
 {
 	public static var psychEngineVersion:String = '0.6.3'; //This is also used for Discord RPC
 	public static var curSelected:Int = 0;
-
+	var isLerping:Bool = true;
 	var menuItems:FlxTypedGroup<Alphabet>;
 	private var camGame:FlxCamera;
 	private var camAchievement:FlxCamera;
@@ -73,9 +73,13 @@ class MainMenuState extends MusicBeatState
 
 		persistentUpdate = persistentDraw = true;
 
-		var yScroll:Float = Math.max(0.25 - (0.05 * (optionShit.length - 4)), 0.1);
-		var bg:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image('menuBG'));
-		bg.scrollFactor.set(0, yScroll);
+		var	funnyNumber:Int = FlxG.random.int(0, 255);
+
+		var pathImage = ClientPrefs.darkMenu ? 'darkMenuBG' : 'menuBG';
+		var bg:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image(pathImage));
+		bg.scrollFactor.set(0, 0);
+		if (ClientPrefs.darkMenu)
+			bg.color = FlxColor.PURPLE;
 		bg.setGraphicSize(Std.int(bg.width * 1.175));
 		bg.updateHitbox();
 		bg.screenCenter();
@@ -88,19 +92,25 @@ class MainMenuState extends MusicBeatState
 		add(camFollowPos);
 
 		magenta = new FlxSprite(-80).loadGraphic(Paths.image('menuDesat'));
-		magenta.scrollFactor.set(0, yScroll);
+		magenta.scrollFactor.set(0, 0);
 		magenta.setGraphicSize(Std.int(magenta.width * 1.175));
 		magenta.updateHitbox();
 		magenta.screenCenter();
 		magenta.visible = false;
 		magenta.antialiasing = ClientPrefs.globalAntialiasing;
 		magenta.color = 0xFFfd719b;
-		add(magenta);
-		
-		var checkDrop:FlxBackdrop = new FlxBackdrop(Paths.image('checkaboardMagenta'), XY, -0, -0);
+		if (!ClientPrefs.darkMenu)
+			add(magenta);
+
+		var pathImage = ClientPrefs.darkMenu ? 'checkboard' : 'checkaboardMagenta';
+		var checkDrop:FlxBackdrop = new FlxBackdrop(Paths.image(pathImage), XY, -0, -0);
 		checkDrop.scrollFactor.set();
+		if (ClientPrefs.darkMenu){
+			checkDrop.alpha = 0.5;
+			checkDrop.color = 0xFF072A69;
+		}
 		checkDrop.screenCenter(X);
-		checkDrop.scale.set(0.7,0.7);
+		checkDrop.scale.set(0.5,0.5);
 		checkDrop.velocity.set(FlxG.random.int(-150, 150),FlxG.random.int(-80, 80));
 		checkDrop.antialiasing = ClientPrefs.globalAntialiasing;
         add(checkDrop);
@@ -108,7 +118,7 @@ class MainMenuState extends MusicBeatState
 		menuItems = new FlxTypedGroup<Alphabet>();
 		add(menuItems);
 
-		var scale:Float = 1;
+		var scale:Float = 0.7;
 		/*if(optionShit.length > 6) {
 			scale = 6 / optionShit.length;
 		}*/
@@ -122,8 +132,8 @@ class MainMenuState extends MusicBeatState
 			menuItems.add(menuItem);
 			menuItem.snapToPosition();
 		}
-
-		var versionShit:FlxText = new FlxText(12, FlxG.height - 64, 0, "ForkLifted v0.0.1", 12);
+		
+		var versionShit:FlxText = new FlxText(12, FlxG.height - 64, 0, "ForkLifted v0.0.1A", 12);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
@@ -208,7 +218,7 @@ class MainMenuState extends MusicBeatState
 					selectedSomethin = true;
 					FlxG.sound.play(Paths.sound('confirmMenu'));
 
-					if(ClientPrefs.flashing) FlxFlicker.flicker(magenta, 1.1, 0.15, false);
+					if(ClientPrefs.flashing && !ClientPrefs.darkMenu) FlxFlicker.flicker(magenta, 1.1, 0.15, false);
 
 					menuItems.forEach(function(spr:FlxSprite)
 					{
@@ -261,7 +271,7 @@ class MainMenuState extends MusicBeatState
 				MusicBeatState.switchState(new MasterEditorMenu());
 			}
 			#end
-			
+		
 			var lerpVal:Float = CoolUtil.boundTo(elapsed * 12, 0, 1);
 			var bullShit:Int = 0;
 			for (item in menuItems.members)

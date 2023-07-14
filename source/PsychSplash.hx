@@ -33,9 +33,6 @@ class PsychSplash extends FlxState
     var skipSplash:FlxText;
     var textNeeded:String = '';
 
-    // I LOVE RANDOM FUCKING VIDEOS!!!!
-    var unfunnyVideos:Array<String> = ['nuhuh','mrbreast','sex','shark','fooled','food','springtrap','wherejet','helpful'];
-
     // i love psych engine community server
     var psychServerText:Array<String> = [
     "'burp'  - Ache",
@@ -50,11 +47,11 @@ class PsychSplash extends FlxState
     "'Imagine yourself in a Frozen Forest...'  - Skry"];
 
     var forkLiftText:Array<String> = [
-    "DO NOT CALL IT A FRICKIN ENGINE ITS A FRICKIN FORK",
+    "hello everybody my name is markiplier",
     "my balls itch",
-    "your mom :trollface:",
+    "what is this suppose to be?",
     "i dont know why this is exist lmfao",
-    "Psych Port Goes Crazy",
+    "the milkman is coming",
     "made with no care by laztrix <3"
                                 ];
 
@@ -84,8 +81,6 @@ class PsychSplash extends FlxState
         else
             textNeeded = psychServerText[FlxG.random.int(0, psychServerText.length)];
 
-        if (FlxG.random.bool(60)){
-       
         splash = new FlxSprite(0,-900).loadGraphic(Paths.image('thepsych'));
 		splash.screenCenter(X);
         splash.setGraphicSize(Std.int(splash.width * 0.35));
@@ -163,20 +158,6 @@ class PsychSplash extends FlxState
                             });
                     });
             });
-        }
-        else
-        {
-            new FlxTimer().start(1, function(guh:FlxTimer)
-                {
-                    var video = new MP4Handler();
-                        video.playVideo(Paths.video('unfunny/'+ unfunnyVideos[FlxG.random.int(0, unfunnyVideos.length)]));
-                        video.finishCallback = function() {
-                            
-                        };
-                        video.canSkip = true;
-                        video.skipKeys = [SPACE, ENTER];
-                });
-        }
 
         super.create();
     }
@@ -185,11 +166,7 @@ class PsychSplash extends FlxState
     override function update(elapsed) 
         {
             if (FlxG.keys.justPressed.SPACE || FlxG.keys.justPressed.ENTER)
-                {
-            
                     FlxG.switchState(thestate);
-                }
-    
             super.update(elapsed);
         }
 }

@@ -7,6 +7,7 @@ import flixel.graphics.FlxGraphic;
 import Controls;
 
 class ClientPrefs {
+	public static var darkMenu:Bool = false;
 	public static var downScroll:Bool = false;
 	public static var middleScroll:Bool = false;
 	public static var opponentStrums:Bool = true;
@@ -16,7 +17,7 @@ class ClientPrefs {
 	public static var noteSplashes:Bool = true;
 	public static var lowQuality:Bool = false;
 	public static var autoFocus:Bool = false;
-	public static var ratingCameras:Bool = false;
+	public static var ratingWorld:Bool = false;
 	public static var shaders:Bool = true;
 	public static var framerate:Int = 60;
 	public static var cursing:Bool = true;
@@ -103,7 +104,8 @@ class ClientPrefs {
 		FlxG.save.data.showFPS = showFPS;
 		FlxG.save.data.flashing = flashing;
 		FlxG.save.data.discordClient = discordClient;
-		FlxG.save.data.ratingCameras = ratingCameras;
+		FlxG.save.data.darkMenu = darkMenu;
+		FlxG.save.data.ratingWorld = ratingWorld;
 		FlxG.save.data.globalAntialiasing = globalAntialiasing;
 		FlxG.save.data.noteSplashes = noteSplashes;
 		FlxG.save.data.lowQuality = lowQuality;
@@ -170,11 +172,14 @@ class ClientPrefs {
 		if(FlxG.save.data.globalAntialiasing != null) {
 			globalAntialiasing = FlxG.save.data.globalAntialiasing;
 		}
+		if(FlxG.save.data.darkMenu != null) {
+			darkMenu = FlxG.save.data.darkMenu;
+		}
 		if(FlxG.save.data.noteSplashes != null) {
 			noteSplashes = FlxG.save.data.noteSplashes;
 		}
-		if(FlxG.save.data.ratingCameras != null) {
-			ratingCameras = FlxG.save.data.ratingCameras;
+		if(FlxG.save.data.ratingWorld != null) {
+			ratingWorld = FlxG.save.data.ratingWorld;
 		}
 		if(FlxG.save.data.lowQuality != null) {
 			lowQuality = FlxG.save.data.lowQuality;

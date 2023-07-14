@@ -45,7 +45,7 @@ class DiscordClient
 			details: "",
 			state: null,
 			largeImageKey: 'icon',
-			largeImageText: "Psych Fork"
+			largeImageText: "erm what the blahaj?"
 		});
 	}
 
@@ -77,19 +77,16 @@ class DiscordClient
 		{
 			endTimestamp = startTimestamp + endTimestamp;
 		}
-		if (ClientPrefs.discordClient)
-		{
-			DiscordRpc.presence({
-				details: details,
-				state: state,
-				largeImageKey: 'icon',
-				largeImageText: "ForkLifted by Laztrix",
-				smallImageKey : smallImageKey,
-				// Obtained times are in milliseconds so they are divided so Discord can use it
-				startTimestamp : Std.int(startTimestamp / 1000),
-				endTimestamp : Std.int(endTimestamp / 1000)
-			});	
-		}
+		DiscordRpc.presence({
+			details: details,
+			state: state,
+			largeImageKey: 'icon',
+			largeImageText: "Psych 0.6.4 | Forklift 0.0.1A | what are you looking :face_with_raised_eyebrow:",
+			smallImageKey : smallImageKey,
+			// Obtained times are in milliseconds so they are divided so Discord can use it
+			startTimestamp : Std.int(startTimestamp / 1000),
+			endTimestamp : Std.int(endTimestamp / 1000)
+		});	
 		
 		//trace('Discord RPC Updated. Arguments: $details, $state, $smallImageKey, $hasStartTimestamp, $endTimestamp');
 	}
