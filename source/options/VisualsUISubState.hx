@@ -93,6 +93,13 @@ class VisualsUISubState extends BaseOptionsMenu
 		false);
 		addOption(option);
 
+		var option:Option = new Option('Opponent Splashes',
+		"If checked, make the opponent also have note splashes when hit a note",
+		'opponentSplash',
+		'bool',
+		false);
+		addOption(option);
+
 		var option:Option = new Option('Health Bar Transparency',
 			'How much transparent should the health bar and icons be.',
 			'healthBarAlpha',

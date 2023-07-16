@@ -74,7 +74,7 @@ class OptionsState extends MusicBeatState
 		add(bg);
 				
 		var checkDrop:FlxBackdrop = new FlxBackdrop(Paths.image('checkboard'), XY, -0, -0);
-		checkDrop.color = 0xFF194955;
+		checkDrop.color = 0xFF642B75;
 		checkDrop.alpha = 0.000001;
 		checkDrop.scrollFactor.set();
 		checkDrop.screenCenter(X);

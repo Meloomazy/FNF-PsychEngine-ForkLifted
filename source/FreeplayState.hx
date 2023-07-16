@@ -124,10 +124,11 @@ class FreeplayState extends MusicBeatState
 		bg.screenCenter();
 		add(bg);
 
-		checkDrop = new FlxBackdrop(Paths.image('checkaboard'), XY, -0, -0);
+		checkDrop = new FlxBackdrop(Paths.image('checkboard'), XY, -0, -0);
 		checkDrop.scrollFactor.set();
+		checkDrop.alpha = 0.35;
+		checkDrop.color = 0xFFfd719b;
 		checkDrop.scale.set(0.5,0.5);
-		checkDrop.screenCenter(X);
 		checkDrop.velocity.set(FlxG.random.int(-150, 150),FlxG.random.int(-80, 80));
 		checkDrop.antialiasing = ClientPrefs.globalAntialiasing;
         add(checkDrop);
@@ -285,7 +286,7 @@ class FreeplayState extends MusicBeatState
 		{
 			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
 		}
-
+		checkDrop.color = bg.color;
 		lerpScore = Math.floor(FlxMath.lerp(lerpScore, intendedScore, CoolUtil.boundTo(elapsed * 24, 0, 1)));
 		lerpRating = FlxMath.lerp(lerpRating, intendedRating, CoolUtil.boundTo(elapsed * 12, 0, 1));
 

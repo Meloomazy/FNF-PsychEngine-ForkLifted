@@ -106,8 +106,8 @@ class MainMenuState extends MusicBeatState
 		var checkDrop:FlxBackdrop = new FlxBackdrop(Paths.image(pathImage), XY, -0, -0);
 		checkDrop.scrollFactor.set();
 		if (ClientPrefs.darkMenu){
-			checkDrop.alpha = 0.5;
-			checkDrop.color = 0xFF072A69;
+			checkDrop.alpha = 0.35;
+			checkDrop.color = 0xFF9B1C42;
 		}
 		checkDrop.screenCenter(X);
 		checkDrop.scale.set(0.5,0.5);
@@ -235,13 +235,12 @@ class MainMenuState extends MusicBeatState
 						else
 						{
 							//spr.screenCenter(Y);
-							FlxTween.tween(spr, {y: 250}, 1, {
+							FlxTween.tween(spr, {y: FlxG.height / 2 - spr.height / 2}, 1, {
 								ease: FlxEase.circOut			
 							});
 							FlxFlicker.flicker(spr, 1, 0.06, false, false, function(flick:FlxFlicker)
 							{
 								var daChoice:String = optionShit[curSelected];
-
 								switch (daChoice)
 								{
 									case 'story_mode':

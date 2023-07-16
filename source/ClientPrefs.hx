@@ -7,6 +7,7 @@ import flixel.graphics.FlxGraphic;
 import Controls;
 
 class ClientPrefs {
+	public static var opponentSplash:Bool = false;
 	public static var darkMenu:Bool = false;
 	public static var downScroll:Bool = false;
 	public static var middleScroll:Bool = false;
@@ -104,6 +105,7 @@ class ClientPrefs {
 		FlxG.save.data.showFPS = showFPS;
 		FlxG.save.data.flashing = flashing;
 		FlxG.save.data.discordClient = discordClient;
+		FlxG.save.data.opponentSplash = opponentSplash;
 		FlxG.save.data.darkMenu = darkMenu;
 		FlxG.save.data.ratingWorld = ratingWorld;
 		FlxG.save.data.globalAntialiasing = globalAntialiasing;
@@ -174,6 +176,9 @@ class ClientPrefs {
 		}
 		if(FlxG.save.data.darkMenu != null) {
 			darkMenu = FlxG.save.data.darkMenu;
+		}
+		if(FlxG.save.data.opponentSplash != null) {
+			opponentSplash = FlxG.save.data.opponentSplash;
 		}
 		if(FlxG.save.data.noteSplashes != null) {
 			noteSplashes = FlxG.save.data.noteSplashes;

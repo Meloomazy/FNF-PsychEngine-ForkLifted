@@ -3242,10 +3242,7 @@ class PlayState extends MusicBeatState
 					if (!daNote.mustPress && daNote.wasGoodHit && !daNote.hitByOpponent && !daNote.ignoreNote)
 					{
 						opponentNoteHit(daNote);
-						if(!daNote.noteSplashDisabled && !daNote.isSustainNote)
-							{
-								spawnNoteSplashOnNote(daNote);
-							}
+						if(ClientPrefs.opponentSplash && !daNote.isSustainNote) spawnNoteSplashOnNote(daNote);
 					}
 
 					if(!daNote.blockHit && daNote.mustPress && cpuControlled && daNote.canBeHit) {
